@@ -1,0 +1,6 @@
+---
+name: azure-service-fabric
+packages: []
+templates:
+  ignoreme: ignoreme
+properties: {}

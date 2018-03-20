@@ -1,0 +1,6 @@
+---
+- type: replace
+  path: /releases/name=azure-service-fabric
+  value:
+    name: azure-service-fabric
+    version: latest
