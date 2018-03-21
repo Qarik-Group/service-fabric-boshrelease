@@ -1,0 +1,68 @@
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+# Detect # of CPUs so make jobs can be parallelized
+CPUS=$(grep -c ^processor /proc/cpuinfo)
+ # Available variables
+# $BOSH_COMPILE_TARGET - where this package & spec'd source files are available
+# $BOSH_INSTALL_TARGET - where you copy/install files to be included in package
+export HOME=/var/vcap
+
+curl -L https://sfossdeps.blob.core.windows.net/binaries/v0.1.tgz -o /tmp/v0.1.tgz
+mkdir -p /external && tar -xvf /tmp/v0.1.tgz -C /
+rm /tmp/v0.1.tgz
+
+ # libunwind-dev on 16.04LTS
+apt-get update && apt-get install -y --no-install-recommends \
+    sudo \
+    openssh-server \
+    build-essential \
+    libtool \
+    cmake \
+    libunwind8-dev \
+    uuid-dev \
+    libxml2-dev \
+    libssl-dev \
+    libssh2-1-dev \
+    lttng-tools \
+    lttng-modules-dkms \
+    liblttng-ust-dev \
+    locales \
+    libcgroup-dev \
+    libib-util \
+    libcurl3 \
+    git \
+    libtool \
+    autoconf \
+    automake \
+    libglib2.0-0 \
+    libglib2.0-dev \
+    bison \
+    flex \
+    libpopt-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    swig \
+    libedit-dev \
+    chrpath
+
+# Install the .NET runtime dependency.  Required for running the product.
+
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
+apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+apt-get install -y apt-transport-https apt-utils
+apt-get update
+apt-get install -y dotnet-runtime-2.0.0
+apt-get remove -y apt-transport-https apt-utils
+
+locale-gen en_US.UTF-8
+
+exportLANG=en_US.UTF-8
+exportLANGUAGE=en_US:en
+exportLC_ALL=en_US.UTF-8
+
+cd service-fabric/src/
+./build.sh -release -j$CPUS
