@@ -16,3 +16,4 @@ blobs/*
 *#
 #*
 tmp
+.envrc

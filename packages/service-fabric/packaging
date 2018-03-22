@@ -60,7 +60,28 @@ apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 
 apt-get install -y apt-transport-https apt-utils
 apt-get update
-apt-get install clang-5.0 lldb-5.0 dotnet-runtime-2.0.0  -y
+# collection of deps from install-deps.sh/install-third-party.sh/Dockerfile
+apt-get install -y \
+    clang-5.0 \
+    lldb-5.0 \
+    \
+    autoconf \
+    \
+    libtool \
+    libglib2.0-0 \
+    libglib2.0-dev \
+    bison \
+    flex \
+    libpopt-dev \
+    \
+    libncurses5-dev \
+    libncursesw5-dev \
+    swig \
+    libedit-dev \
+    \
+    babeltrace \
+    dotnet-runtime-2.0.0
+
 apt-get remove -y apt-transport-https apt-utils
 
 locale-gen en_US.UTF-8
