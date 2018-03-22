@@ -48,14 +48,19 @@ apt-get update && apt-get install -y --no-install-recommends \
 
 # Install the .NET runtime dependency.  Required for running the product.
 
+
+echo "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main" > /etc/apt/sources.list.d/llvm.list
+echo "deb-src http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main" >> /etc/apt/sources.list.d/llvm.list
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main" > /etc/apt/sources.list.d/dotnetdev.list
 apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+
 apt-get install -y apt-transport-https apt-utils
 apt-get update
-apt-get install -y dotnet-runtime-2.0.0
+apt-get install clang-5.0 lldb-5.0 dotnet-runtime-2.0.0  -y
 apt-get remove -y apt-transport-https apt-utils
 
 locale-gen en_US.UTF-8
@@ -64,5 +69,12 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
 export LC_ALL=en_US.UTF-8
 
+# build.sh contains:
+export BuildThirdPartyLib=OFF
+export ClangVersion=5.0
+
 cd service-fabric/src/
-./build.sh -release -j$CPUS
+./build.sh -release -v -j$CPUS || {
+    cat /var/vcap/data/compile/service-fabric/service-fabric/build.prod/CMakeFiles/CMakeOutput.log
+    exit 1
+}
