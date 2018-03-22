@@ -9,7 +9,7 @@ CPUS=$(grep -c ^processor /proc/cpuinfo)
 export HOME=/var/vcap
 
 curl -L https://sfossdeps.blob.core.windows.net/binaries/v0.1.tgz -o /tmp/v0.1.tgz
-mkdir -p /external && tar -xvf /tmp/v0.1.tgz -C /
+mkdir -p service-fabric/external && tar -xvf /tmp/v0.1.tgz -C service-fabric/
 rm /tmp/v0.1.tgz
 
  # libunwind-dev on 16.04LTS
@@ -60,9 +60,9 @@ apt-get remove -y apt-transport-https apt-utils
 
 locale-gen en_US.UTF-8
 
-exportLANG=en_US.UTF-8
-exportLANGUAGE=en_US:en
-exportLC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
+export LC_ALL=en_US.UTF-8
 
 cd service-fabric/src/
 ./build.sh -release -j$CPUS
