@@ -38,6 +38,6 @@ releases:
   url: git+https://github.com/cloudfoundry-incubator/bpm-release
   version: 0.5.0
 - name: azure-service-fabric
-  sha1: 496012528d88f516bf27fb5414dabe0fe1645b79
-  url: https://github.com/starkandwayne/azure-service-fabric-boshrelease/releases/download/v0.1.0/azure-service-fabric-0.1.0.tgz
-  version: 0.1.0
+  sha1: 906146ebc4e92605df19d2fd636bdbb288381d83
+  url: https://github.com/starkandwayne/azure-service-fabric-boshrelease/releases/download/v0.1.1/azure-service-fabric-0.1.1.tgz
+  version: 0.1.1
