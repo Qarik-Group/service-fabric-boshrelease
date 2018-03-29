@@ -6,7 +6,7 @@ meta:
 
   test-errand: ~
 
-  initial_version: 1.0.0
+  initial_version: 0.1.0
 
   git:
     email:  ((git-commit-email))
