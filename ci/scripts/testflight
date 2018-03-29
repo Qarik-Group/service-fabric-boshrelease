@@ -112,7 +112,12 @@ cat > tmp/deployment.yml <<YAML
   value:
     name: ${release_name}
     version: ${release_dev_version}
+
+- type: replace
+  path: /instance_groups/name=azure-service-fabric/instances
+  value: 1
 YAML
+
 
 op_patch_files_flags=""
 for op_patch_file in ${MANIFEST_OP_PATHS//,/ } ; do
