@@ -10,7 +10,7 @@ addons:
 instance_groups:
 - name: azure-service-fabric
   azs: [z1, z2, z3]
-  instances: 1
+  instances: 5
   vm_type: service-fabric
   stemcell: default
   networks: [{name: default}]
