@@ -13,6 +13,13 @@ git clone https://github.com/cloudfoundry-community/azure-service-fabric-boshrel
 bosh deploy azure-service-fabric-boshrelease/manifests/azure-service-fabric.yml
 ```
 
+The `bosh deploy` command `packaging` scripts in your BOSH environment, which will require egress Internet access to fetch Debian packages. If your BOSH environment is offline, you can use the pre-compile release:
+
+```plain
+bosh deploy azure-service-fabric-boshrelease/manifests/azure-service-fabric.yml \
+  -o azure-service-fabric-boshrelease/manifests/operators/use-compiled-releases.yml
+```
+
 If your BOSH does not have Credhub/Config Server, then remember `--vars-store` to allow generation of passwords and certificates.
 
 ### Update
