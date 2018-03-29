@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -eux
+
+# Available variables
+# $BOSH_COMPILE_TARGET - where this package & spec'd source files are available
+# $BOSH_INSTALL_TARGET - where you copy/install files to be included in package
+export HOME=/var/vcap
+
+baseDir=$BOSH_INSTALL_TARGET
+cacheDir="$baseDir/apt/cache"
+mkdir -p "$cacheDir"
+
+options="-o debug::nolocking=true -o dir::cache=$cacheDir"
+
+apt-get install -y apt-transport-https apt-utils
+
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list
+apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# from src/service-fabric/src/prod/linuxsetup/debian/runtime/control/control.template
+apt-get update
+apt-get install ${options} -y -d \
+  lttng-tools \
+  lttng-modules-dkms \
+  liblttng-ust0 \
+  openssh-server \
+  rssh \
+  sshpass \
+  members \
+  libunwind8 \
+  libib-util \
+  acl \
+  libssh2-1 \
+  nodejs \
+  nodejs-legacy \
+  npm \
+  atop \
+  libcurl3 \
+  dotnet-runtime-2.0.0 \
+  docker-ce \
+  cgroup-bin \
+  ebtables

@@ -1,6 +1,6 @@
 ---
 name: azure-service-fabric
-packages: [dotnet]
+packages: [service-fabric-deps]
 templates:
   pre-start.sh: bin/pre-start
 properties: {}

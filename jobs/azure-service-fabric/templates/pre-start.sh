@@ -1,6 +1,6 @@
 #!/bin/bash
 
-package=dotnet
+package=service-fabric-deps
 
 set -eux
 
