@@ -1,0 +1,15 @@
+- path: /releases/name=azure-service-fabric/url
+  type: replace
+  value: "https://s3.amazonaws.com/azure-service-fabric-boshrelease/compiled-releases/azure-service-fabric-0.1.0-ubuntu-trusty-3541.10-20180329-122636-421197236-20180329122652.tgz"
+- path: /releases/name=azure-service-fabric/version
+  type: replace
+  value: "0.1.0"
+- path: /releases/name=azure-service-fabric/sha1
+  type: replace
+  value: "0b9c771bfcdd6c7c064c36b0dcae8112623d0416"
+
+- path: /releases/name=azure-service-fabric/stemcell?
+  type: replace
+  value:
+    os: "ubuntu-trusty"
+    version: "3541.10"
