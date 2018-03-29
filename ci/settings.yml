@@ -1,7 +1,7 @@
 ---
 meta:
   name:    azure-service-fabric
-  target:  ohio-sw
+  target:  ohio-cf
   url:     https://ci2.starkandwayne.com
 
   test-errand: ~
@@ -13,10 +13,10 @@ meta:
     name:   ((git-commit-name))
 
   bosh-lite:
-    target:   ((bosh-environment))
-    cacert:   ((bosh-ca-cert))
-    username: ((bosh-client))
-    password: ((bosh-client-secret))
+    target:   ((bosh-lite-environment))
+    cacert:   ((bosh-lite-ca-cert))
+    username: ((bosh-lite-client))
+    password: ((bosh-lite-client-secret))
 
   aws:
     bucket:      (( grab meta.pipeline ))
