@@ -1,0 +1,24 @@
+name: azure-service-fabric
+version: 0.1.0
+commit_hash: 04f7c9c
+uncommitted_changes: false
+jobs:
+- name: azure-service-fabric
+  version: e60a119ed31c3f88b355be1a4d6db2417a01ec4b
+  fingerprint: e60a119ed31c3f88b355be1a4d6db2417a01ec4b
+  sha1: 0eae3222f6142db1fd48cefa69918192ba5d0dd6
+packages:
+- name: service-fabric
+  version: 0fa5267c2c9df6fd9b7db3292f4bc49d477b2b64
+  fingerprint: 0fa5267c2c9df6fd9b7db3292f4bc49d477b2b64
+  sha1: ca6ab37981b1d652893575ad1f8218c63d6887d9
+  dependencies: []
+- name: service-fabric-debs
+  version: 194273cfb86bbc7de1bd1efdb878aca30bcb2979
+  fingerprint: 194273cfb86bbc7de1bd1efdb878aca30bcb2979
+  sha1: 2c57c5078c7e839f78d29587713c0ed8e0c84fd2
+  dependencies: []
+license:
+  version: b26f279e03d973a98acbe79f1efa357e630ef7bd
+  fingerprint: b26f279e03d973a98acbe79f1efa357e630ef7bd
+  sha1: db69b34d9d2067bb2aae4de813ae2fd8d14a51ba
