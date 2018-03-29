@@ -1,6 +1,6 @@
 ---
 name: azure-service-fabric
-packages: [service-fabric]
+packages: [dotnet]
 templates:
   ignoreme: ignoreme
 properties: {}
