@@ -467,7 +467,7 @@ resources:
   - name: ubuntu-trusty-stemcell-3541
     type: bosh-io-stemcell
     source:
-      name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+      name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
       version_family: 3541.latest
 
   - name: compiled-releases
