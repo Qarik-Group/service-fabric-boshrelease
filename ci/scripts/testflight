@@ -112,10 +112,6 @@ cat > tmp/deployment.yml <<YAML
   value:
     name: ${release_name}
     version: ${release_dev_version}
-
-- type: replace
-  path: /instance_groups/name=azure-service-fabric/instances
-  value: 1
 YAML
 
 
@@ -128,7 +124,8 @@ set -x
 
 bosh2 int ${MANIFEST_PATH} \
   -o tmp/deployment.yml    \
-  ${op_patch_files_flags}            \
+	-o manifests/operators/single-node.yml \
+  ${op_patch_files_flags}  \
   --vars-store tmp/creds.yml \
   --vars-file  tmp/vars.yml  \
   --var-errs \
