@@ -45,7 +45,7 @@ meta:
     private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
     access_token: (( param "Please generate a Personal Access Token to be used for creating github releases (do you have a ci-bot?)" ))
 
-  bosh-lite:
+  bosh:
     target:     (( param "Please specify the BOSH target URI for the bosh-lite to run test deployments against" ))
     cacert:     (( param "Please specify the BOSH Director Root CA cert" ))
     username:   admin
@@ -103,11 +103,11 @@ jobs:
               args: []
             params:
               REPO_ROOT:            git
-              BOSH_ENVIRONMENT:     (( grab meta.bosh-lite.target ))
-              BOSH_CA_CERT:         (( grab meta.bosh-lite.cacert ))
-              BOSH_CLIENT:          (( grab meta.bosh-lite.username ))
-              BOSH_CLIENT_SECRET:   (( grab meta.bosh-lite.password ))
-              BOSH_DEPLOYMENT:      (( grab meta.bosh-lite.deployment ))
+              BOSH_ENVIRONMENT:     (( grab meta.bosh.target ))
+              BOSH_CA_CERT:         (( grab meta.bosh.cacert ))
+              BOSH_CLIENT:          (( grab meta.bosh.username ))
+              BOSH_CLIENT_SECRET:   (( grab meta.bosh.password ))
+              BOSH_DEPLOYMENT:      (( grab meta.bosh.deployment ))
               TEST_ERRANDS:         (( grab meta.test-errands || meta.test-errand || ~ ))
               AWS_ACCESS_KEY:       (( grab meta.aws.access_key ))
               AWS_SECRET_KEY:       (( grab meta.aws.secret_key ))
@@ -154,11 +154,11 @@ jobs:
               args: []
             params:
               REPO_ROOT:            git-pull-requests
-              BOSH_ENVIRONMENT:     (( grab meta.bosh-lite.target ))
-              BOSH_CA_CERT:         (( grab meta.bosh-lite.cacert ))
-              BOSH_CLIENT:          (( grab meta.bosh-lite.username ))
-              BOSH_CLIENT_SECRET:   (( grab meta.bosh-lite.password ))
-              BOSH_DEPLOYMENT:      (( grab meta.bosh-lite.deployment-pr ))
+              BOSH_ENVIRONMENT:     (( grab meta.bosh.target ))
+              BOSH_CA_CERT:         (( grab meta.bosh.cacert ))
+              BOSH_CLIENT:          (( grab meta.bosh.username ))
+              BOSH_CLIENT_SECRET:   (( grab meta.bosh.password ))
+              BOSH_DEPLOYMENT:      (( grab meta.bosh.deployment-pr ))
               TEST_ERRANDS:         (( grab meta.test-errands || meta.test-errand || ~ ))
               AWS_ACCESS_KEY:       (( grab meta.aws.access_key ))
               AWS_SECRET_KEY:       (( grab meta.aws.secret_key ))
@@ -232,10 +232,10 @@ jobs:
           run:
             path: git/ci/scripts/export-release
           params:
-            BOSH_ENVIRONMENT:     (( grab meta.bosh-lite.target ))
-            BOSH_CA_CERT:         (( grab meta.bosh-lite.cacert ))
-            BOSH_CLIENT:          (( grab meta.bosh-lite.username ))
-            BOSH_CLIENT_SECRET:   (( grab meta.bosh-lite.password ))
+            BOSH_ENVIRONMENT:     (( grab meta.bosh.target ))
+            BOSH_CA_CERT:         (( grab meta.bosh.cacert ))
+            BOSH_CLIENT:          (( grab meta.bosh.username ))
+            BOSH_CLIENT_SECRET:   (( grab meta.bosh.password ))
       - put: compiled-releases
         params:
           file: "compiled-release/compiled-releases/*.tgz"

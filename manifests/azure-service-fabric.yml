@@ -11,7 +11,7 @@ instance_groups:
 - name: azure-service-fabric
   azs: [z1, z2, z3]
   instances: 1
-  vm_type: default
+  vm_type: service-fabric
   stemcell: default
   networks: [{name: default}]
   jobs:

@@ -8,3 +8,4 @@ CPUS=$(grep -c ^processor /proc/cpuinfo)
 # $BOSH_INSTALL_TARGET - where you copy/install files to be included in package
 export HOME=/var/vcap
 
+cp -ar service-fabric/* $BOSH_INSTALL_TARGET
