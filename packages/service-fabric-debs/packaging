@@ -46,3 +46,7 @@ apt-get install ${options} -y -d \
   docker-ce \
   cgroup-bin \
   ebtables
+
+cd $cacheDir/archives
+curl -LO https://s3.amazonaws.com/service-fabric-bits/out/build.prod/FabricDrop/deb/servicefabric_6.2.141.1.deb
+curl -LO https://s3.amazonaws.com/service-fabric-bits/out/build.prod/FabricDrop/deb/servicefabric_sdkcommon_1.2.0.deb

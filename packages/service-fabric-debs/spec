@@ -1,4 +1,4 @@
 ---
-name: service-fabric-deps
+name: service-fabric-debs
 dependencies: []
 files: []
