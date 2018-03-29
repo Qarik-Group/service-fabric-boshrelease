@@ -2,5 +2,5 @@
 name: azure-service-fabric
 packages: [dotnet]
 templates:
-  ignoreme: ignoreme
+  pre-start.sh: bin/pre-start
 properties: {}
