@@ -1,0 +1,5 @@
+check process azure-service-fabric
+  with pidfile /var/vcap/sys/run/bpm/azure-service-fabric/azure-service-fabric.pid
+  start program "/var/vcap/jobs/bpm/bin/bpm start azure-service-fabric"
+  stop program "/var/vcap/jobs/bpm/bin/bpm stop azure-service-fabric"
+  group vcap

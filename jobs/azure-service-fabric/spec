@@ -1,7 +1,54 @@
 ---
 name: azure-service-fabric
+
 packages: [service-fabric-debs, service-fabric]
 templates:
   pre-start.sh: bin/pre-start
+  config/bpm.yml: config/bpm.yml
   config/ClusterManifest.xml: config/ClusterManifest.xml
-properties: {}
+
+# Documentation https://bosh.io/docs/links.html
+# Tutorial      https://gist.github.com/Amit-PivotalLabs/c39528248b8cdc4ba8e347f8aa68abb6
+consumes:
+- name: azure-service-fabric
+  type: azure-service-fabric
+
+provides:
+- name: azure-service-fabric
+  type: azure-service-fabric
+  properties:
+    - ClientConnectionEndpoint
+    - LeaseDriverEndpoint
+    - ClusterConnectionEndpoint
+    - ServiceConnectionEndpoint
+    - HttpGatewayEndpoint
+    - HttpApplicationGatewayEndpoint
+    - ApplicationEndpoints.Start
+    - ApplicationEndpoints.End
+
+properties:
+  ClientConnectionEndpoint:
+    description: Port for ClientConnection
+    default: 19000
+  LeaseDriverEndpoint:
+    description: Port for LeaseDriver
+    default: 19001
+  ClusterConnectionEndpoint:
+    description: Port for ClusterConnection
+    default: 19002
+  ServiceConnectionEndpoint:
+    description: Port for ServiceConnection
+    default: 19006
+  HttpGatewayEndpoint:
+    description: Port for HttpGateway
+    default: 19080
+  HttpApplicationGatewayEndpoint:
+    description: Port for HttpApplicationGateway
+    default: 19081
+
+  ApplicationEndpoints.Start:
+    description: Start port for application endpoints
+    default: 22001
+  ApplicationEndpoints.End:
+    description: End port for application endpoints
+    default: 23000

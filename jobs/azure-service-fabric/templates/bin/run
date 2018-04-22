@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Based on servicefabric.service
+
+set -eu
+
+echo "Setting environment for FabricDeployer to run"
+mkdir -p /etc/servicefabric
+
+FabricBinRoot=/opt/microsoft/servicefabric/bin
+FabricCodePath=${FabricBinRoot}/Fabric/Fabric.Code
+
+FabricDataRoot=/var/vcap/store/azure-service-fabric
+FabricLogRoot=/var/vcap/sys/log/azure-service-fabric
+
+ClusterManifest=/var/vcap/jobs/azure-service-fabric/config/ClusterManifest.xml
+
+echo -n ${FabricDataRoot} > /etc/servicefabric/FabricDataRoot
+echo -n ${FabricLogRoot}  > /etc/servicefabric/FabricLogRoot
+echo -n ${FabricBinRoot}  > /etc/servicefabric/FabricBinRoot
+echo -n ${FabricCodePath} > /etc/servicefabric/FabricCodePath
+
+export LD_LIBRARY_PATH=${FabricCodePath}
+
+mkdir -p ${FabricLogRoot}/Traces
+
+echo Running FabricDeployer on ${ClusterManifest}
+if [ "${InfraManifest:-X}" == "X" ]; then
+    ${FabricCodePath}/FabricDeployer.sh /operation:Create /fabricBinRoot:${FabricBinRoot} /fabricDataRoot:${FabricDataRoot} /cm:${ClusterManifest}
+else
+    ${FabricCodePath}/FabricDeployer.sh /operation:Create /fabricBinRoot:${FabricBinRoot} /fabricDataRoot:${FabricDataRoot} /cm:${ClusterManifest} /im:${InfraManifest}
+fi
+
+echo Setting sfuser as owner for FabricDataRoot
+chown -R sfuser:sfuser ${FabricDataRoot}
+echo Setting sfuser as owner of FabricBinRoot
+chown -R sfuser:sfuser ${FabricBinRoot}
+
+cd /opt/microsoft/servicefabric/bin
+/opt/microsoft/servicefabric/bin/starthost.sh

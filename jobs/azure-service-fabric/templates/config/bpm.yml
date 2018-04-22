@@ -1,0 +1,9 @@
+---
+processes:
+- name: azure-service-fabric
+  executable: /var/vcap/jobs/azure-service-fabric/bin/ctl
+  args: []
+  ephemeral_disk: true
+  persistent_disk: true
+
+# example at https://github.com/cloudfoundry-incubator/bpm-release/blob/master/jobs/bpm-test-agent/templates/bpm.yml.erb

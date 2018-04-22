@@ -3,15 +3,17 @@
   <NodeTypes>
     <NodeType Name="<%= spec.name %>">
       <Endpoints>
-        <LeaseDriverEndpoint Port="10545" />
-        <ClusterConnectionEndpoint Port="10546" />
-        <ServiceConnectionEndpoint Port="10547" />
-        <ClusterManagerReplicatorEndpoint Port="10548" />
-        <NamingReplicatorEndpoint Port="10548" />
-        <FailoverManagerReplicatorEndpoint Port="10548" />
-        <ClientConnectionEndpoint Port="10549" />
-        <HttpGatewayEndpoint Port="10550" Protocol="https" />
-        <ApplicationEndpoints StartPort="10552" EndPort="10584" />
+        <ClientConnectionEndpoint Port="19000" />
+        <LeaseDriverEndpoint Port="19001" />
+        <ClusterConnectionEndpoint Port="19002" />
+        <ServiceConnectionEndpoint Port="19006" />
+        <HttpGatewayEndpoint Port="19080" Protocol="http" />
+        <HttpApplicationGatewayEndpoint Port="19081" Protocol="http" />
+        <ApplicationEndpoints StartPort="22001" EndPort="23000" />
+
+        <ApplicationEndpoints
+          StartPort="<%= p('ApplicationEndpoints.Start') %>"
+          EndPort="<%= p('ApplicationEndpoints.End') %>" />
       </Endpoints>
       <Certificates> <!-- TODO or ignore? -->
         <ServerCertificate X509FindType="FindBySubjectName" X509FindValue="sfdev" />
