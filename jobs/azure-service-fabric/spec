@@ -3,4 +3,5 @@ name: azure-service-fabric
 packages: [service-fabric-debs, service-fabric]
 templates:
   pre-start.sh: bin/pre-start
+  config/ClusterManifest.xml: config/ClusterManifest.xml
 properties: {}
