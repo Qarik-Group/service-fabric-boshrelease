@@ -42,7 +42,7 @@ apt-get install ${options} -y -d \
   npm \
   atop \
   libcurl3 \
-  dotnet-runtime-2.0.0 \
+  dotnet-runtime-2.0.6 \
   docker-ce \
   cgroup-bin \
   ebtables
