@@ -29,7 +29,7 @@
         <Node NodeName="N<%= spec.name %>"
           NodeTypeRef="N<%= spec.name %>Ref"
           IPAddressOrFQDN="<%= spec.address %>"
-          IsSeedNode="<%= spec.bootstrap %>"
+          IsSeedNode="true"
           FaultDomain="fd:/<%= spec.az %>"
           UpgradeDomain="<%= spec.az %>" />
       </NodeList>
