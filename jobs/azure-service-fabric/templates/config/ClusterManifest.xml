@@ -16,7 +16,7 @@
           StartPort="<%= p('ApplicationEndpoints.Start') %>"
           EndPort="<%= p('ApplicationEndpoints.End') %>" />
       </Endpoints>
-      <Certificates> <!-- TODO or ignore? -->
+      <Certificates> <!-- under FabricCertificateType -->
         <ServerCertificate X509FindType="FindBySubjectName" X509FindValue="sfdev" />
         <ClientCertificate X509FindType="FindBySubjectName" X509FindValue="sfdev" />
       </Certificates>
@@ -24,7 +24,7 @@
   </NodeTypes>
   <Infrastructure>
     <Linux IsScaleMin="true">
-      <NodeList> <!-- TODO -->
+      <NodeList> <!-- TODO list of instances in link -->
         <Node NodeName="<%= spec.name %>"
           IPAddressOrFQDN="<%= spec.address %>"
           IsSeedNode="<%= spec.bootstrap %>"
@@ -40,7 +40,7 @@
         <Parameter Name="Filters" Value="HttpGateway:5,Managed:5,TokenValidationServiceAgent:5" />
     </Section>
     <Section Name="Trace/Etw">
-        <Parameter Name="Level" Value="5" />
+        <Parameter Name="Level" Value="4" />
     </Section>
     <Section Name="Trace/File">
         <Parameter Name="Level" Value="4" />
@@ -48,36 +48,37 @@
         <Parameter Name="Path" Value="/var/vcap/sys/log/azure-service-fabric/aad.trace" />
     </Section>
     <Section Name="Federation">
-      <Parameter Name="NodeIdGeneratorVersion" Value="V3" />
+      <Parameter Name="NodeIdGeneratorVersion" Value="V4" />
     </Section>
     <Section Name="ClusterManager">
-      <Parameter Name="TargetReplicaSetSize" Value="1" />
-      <Parameter Name="MinReplicaSetSize" Value="1" />
-      <Parameter Name="ReplicaRestartWaitDuration" Value="5" />
+      <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
+      <Parameter Name="TargetReplicaSetSize" Value="3" />
+      <Parameter Name="MinReplicaSetSize" Value="3" />
       <Parameter Name="UpgradeStatusPollInterval" Value="5" />
-      <Parameter Name="FabricUpgradeStatusPollInterval" Value="5" />
       <Parameter Name="UpgradeHealthCheckInterval" Value="5" />
       <Parameter Name="FabricUpgradeHealthCheckInterval" Value="5" />
     </Section>
     <Section Name="FailoverManager">
-      <Parameter Name="ClusterStableWaitDuration" Value="0" />
-      <Parameter Name="PeriodicStateScanInterval" Value="2" />
-      <Parameter Name="MinActionRetryIntervalPerReplica" Value="5" />
-      <Parameter Name="PeriodicStateCleanupScanInterval" Value="15" />
-      <Parameter Name="SystemReplicaRestartWaitDuration" Value="5" />
-      <Parameter Name="DeletedReplicaKeepDuration" Value="5" />
-      <Parameter Name="ExpectedClusterSize" Value="1" />
-      <Parameter Name="TargetReplicaSetSize" Value="1" />
-      <Parameter Name="MinReplicaSetSize" Value="1" />
-      <Parameter Name="ReplicaRestartWaitDuration" Value="5" />
-      <Parameter Name="UserReplicaRestartWaitDuration" Value="5" />
+      <!-- expected cluster size allows the placement to start when the cluster is started. This value should be less than total number of nodes
+            as without it the FailoverManager will not start the placement of the user services. This value should be 80% to 90% of the cluster size.
+      -->
+      <Parameter Name="ExpectedClusterSize" Value="4" />
+      <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
+      <Parameter Name="TargetReplicaSetSize" Value="3" />
+      <Parameter Name="MinReplicaSetSize" Value="3" />
+      <Parameter Name="ReconfigurationTimeLimit" Value="20" />
+      <Parameter Name="BuildReplicaTimeLimit" Value="20" />
+      <Parameter Name="CreateInstanceTimeLimit" Value="20" />
+      <Parameter Name="PlacementTimeLimit" Value="20" />
     </Section>
     <Section Name="Hosting">
-      <Parameter Name="EnableActivateNoWindow" Value="True" />
-      <Parameter Name="ActivatedProcessDieOnUnhandledExceptionEnabled" Value="False" />
-      <Parameter Name="RunAsPolicyEnabled" Value="True" />
-      <Parameter Name="EndpointProviderEnabled" Value="True" />
-      <Parameter Name="FirewallPolicyEnabled" Value="True" />
+      <Parameter Name="EndpointProviderEnabled" Value="true" />
+      <Parameter Name="RunAsPolicyEnabled" Value="true" />
+      <Parameter Name="DeactivationScanInterval" Value="60" />
+      <Parameter Name="DeactivationGraceInterval" Value="10" />
+      <Parameter Name="EnableProcessDebugging" Value="true" />
+      <Parameter Name="ServiceTypeRegistrationTimeout" Value="20" />
+      <Parameter Name="CacheCleanupScanInterval" Value="300" />
     </Section>
     <Section Name="HttpGateway">
       <Parameter Name="IsEnabled" Value="True" />
@@ -87,23 +88,27 @@
         <Parameter Name="ImageStoreConnectionString" Value="file:/var/vcap/store/azure-service-fabric/ImageStore" />
     </Section>
     <Section Name="NamingService">
-      <Parameter Name="PartitionCount" Value="1" />
-      <Parameter Name="TargetReplicaSetSize" Value="1" />
+      <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
+      <Parameter Name="TargetReplicaSetSize" Value="3" />
+      <Parameter Name="MinReplicaSetSize" Value="3" />
+    </Section>
+    <Section Name="ImageStoreService">
+      <Parameter Name="TargetReplicaSetSize" Value="3" />
       <Parameter Name="MinReplicaSetSize" Value="1" />
-      <Parameter Name="ReplicaRestartWaitDuration" Value="5" />
     </Section>
     <Section Name="PerformanceCounterLocalStore">
       <Parameter Name="IsEnabled" Value="False" />
     </Section>
     <Section Name="PlacementAndLoadBalancing">
-      <Parameter Name="LoadBalancingEnabled" Value="False" />
+      <!-- balance the load on the cluster every 5 minutes.  -->
+      <Parameter Name="MinLoadBalancingInterval" Value="300" />
     </Section>
     <Section Name="ReconfigurationAgent">
-      <Parameter Name="ReplicaUpMessageRetryInterval" Value="5" />
-      <Parameter Name="RAUpgradeProgressCheckInterval" Value="2" />
-      <Parameter Name="FabricUpgradeReplicaCloseCompleteCheckInterval" Value="1" />
-      <Parameter Name="IsDeactivationInfoEnabled" Value="True" />
-      <Parameter Name="ReplicaOpenFailureWarningReportThreshold" Value="1" />
+      <Parameter Name="ServiceApiHealthDuration" Value="20" />
+      <Parameter Name="ServiceReconfigurationApiHealthDuration" Value="20" />
+      <Parameter Name="LocalHealthReportingTimerInterval" Value="5" />
+      <Parameter Name="IsDeactivationInfoEnabled" Value="true" />
+      <Parameter Name="RAUpgradeProgressCheckInterval" Value="3" />
     </Section>
     <Section Name="FabricClient">
       <Parameter Name="HealthReportSendInterval" Value="1" />
@@ -127,8 +132,25 @@
       <Parameter Name="RunAsAccountType" Value="LocalSystem" />
     </Section>
 
-    <Section Name="TokenValidationService">
-      <Parameter Name="Providers" Value="AAD" />
+    <!-- The sections below specify parameters for the logs used by the different stateful system services.
+          LogSize specifies the size of the log used for by the system service. It is in units of bytes.
+          MaximumRecordSize  specifies the size of the maximum record that can be stored in the log. It is in units of bytes.
+          Important Note: The log size must be at least 16 times the size of the maximum record. So in the settings below, the log size is 128MB and the maximum record size is 8MB. 16 times 8MB is 128MB. If the log size is less than 16 times the maximum record size, the cluster will not start.-->
+    <Section Name="ClusterManager/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+    <Section Name="FileStoreService/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+    <Section Name="Naming/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+    <Section Name="Failover/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
     </Section>
 
     <Section Name="Security">
