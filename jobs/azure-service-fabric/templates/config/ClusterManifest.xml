@@ -3,6 +3,7 @@
   <NodeTypes>
     <NodeType Name="<%= spec.name %>">
       <Endpoints>
+        <!-- see ServiceFabricServiceModel.xsd under FabricEndpointsType -->
         <ClientConnectionEndpoint Port="19000" />
         <LeaseDriverEndpoint Port="19001" />
         <ClusterConnectionEndpoint Port="19002" />
@@ -27,7 +28,9 @@
         <Node NodeName="<%= spec.name %>"
           IPAddressOrFQDN="<%= spec.address %>"
           IsSeedNode="<%= spec.bootstrap %>"
-          NodeTypeRef="<%= spec.name %>Ref" />
+          NodeTypeRef="<%= spec.name %>Ref"
+          FaultDomain="fd:/<%= spec.az %>"
+          UpgradeDomain="<%= spec.az %>" />
       </NodeList>
     </Linux>
   </Infrastructure>
