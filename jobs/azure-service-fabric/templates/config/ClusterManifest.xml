@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="Test Generated ClusterManifest" Version="v1" Description="Test Generated ClusterManifest" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <NodeTypes>
-    <NodeType Name="<%= spec.name %>">
+    <NodeType Name="N<%= spec.name %>Ref">
       <Endpoints>
         <!-- see ServiceFabricServiceModel.xsd under FabricEndpointsType -->
         <ClientConnectionEndpoint Port="19000" />
@@ -16,19 +16,20 @@
           StartPort="<%= p('ApplicationEndpoints.Start') %>"
           EndPort="<%= p('ApplicationEndpoints.End') %>" />
       </Endpoints>
-      <Certificates> <!-- under FabricCertificateType -->
-        <ServerCertificate X509FindType="FindBySubjectName" X509FindValue="sfdev" />
-        <ClientCertificate X509FindType="FindBySubjectName" X509FindValue="sfdev" />
-      </Certificates>
+      <!--Certificates>
+        <ClusterCertificate X509FindType = "FindBySubjectName" X509FindValue="*.eastus.cloudapp.azure.com" />
+        <ServerCertificate X509FindType = "FindBySubjectName" X509FindValue="*.eastus.cloudapp.azure.com" />
+        <ClientCertificate X509FindType = "FindBySubjectName" X509FindValue="*.eastus.cloudapp.azure.com" />
+      </Certificates-->
     </NodeType>
   </NodeTypes>
   <Infrastructure>
     <Linux IsScaleMin="true">
       <NodeList> <!-- TODO list of instances in link -->
-        <Node NodeName="<%= spec.name %>"
+        <Node NodeName="N<%= spec.name %>"
+          NodeTypeRef="N<%= spec.name %>Ref"
           IPAddressOrFQDN="<%= spec.address %>"
           IsSeedNode="<%= spec.bootstrap %>"
-          NodeTypeRef="<%= spec.name %>Ref"
           FaultDomain="fd:/<%= spec.az %>"
           UpgradeDomain="<%= spec.az %>" />
       </NodeList>
