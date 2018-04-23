@@ -21,7 +21,9 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(l
 apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+apt-add-repository -y ppa:lttng/ppa
 
 # from src/service-fabric/src/prod/linuxsetup/debian/runtime/control/control.template
 apt-get update
