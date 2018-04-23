@@ -7,6 +7,7 @@ set -eu
 echo "Setting environment for FabricDeployer to run"
 mkdir -p /etc/servicefabric
 
+# I think required/available env vars are in src/prod/src/Common/FabricEnvironment.cpp
 FabricBinRoot=/opt/microsoft/servicefabric/bin
 FabricCodePath=${FabricBinRoot}/Fabric/Fabric.Code
 
@@ -31,10 +32,53 @@ else
     ${FabricCodePath}/FabricDeployer.sh /operation:Create /fabricBinRoot:${FabricBinRoot} /fabricDataRoot:${FabricDataRoot} /cm:${ClusterManifest} /im:${InfraManifest}
 fi
 
+# TODO ok for bpm to create/switch user?
 echo Setting sfuser as owner for FabricDataRoot
 chown -R sfuser:sfuser ${FabricDataRoot}
 echo Setting sfuser as owner of FabricBinRoot
 chown -R sfuser:sfuser ${FabricBinRoot}
 
-cd /opt/microsoft/servicefabric/bin
-/opt/microsoft/servicefabric/bin/starthost.sh
+cd ${FabricBinRoot}
+
+# Taken from /opt/microsoft/servicefabric/bin/starthost.sh
+#
+# Changes:
+#   branch FabricLogRoot:
+#     -lttng_handler.sh "${FabricLogRoot}/Traces"
+#   branch explicit-console-mode:
+#     FabricHost --console --skipfabricsetup
+
+# increase limits
+ulimit -Sc unlimited
+ulimit -Hc unlimited
+ulimit -n 99999
+
+sed -i '/^fs\.inotify\.max_user_instances/d' /etc/sysctl.conf
+echo fs.inotify.max_user_instances=2048 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+# rssh setting
+if [ ! -f /etc/rssh.conf ]; then
+   echo "Error: rssh not installed."
+   exit -1
+fi
+if ! grep -q "^allowscp" /etc/rssh.conf ; then
+   echo "allowscp" >> /etc/rssh.conf
+fi
+if ! grep -q "^allowsftp" /etc/rssh.conf ; then
+   echo "allowsftp" >> /etc/rssh.conf
+fi
+
+#echo "/var/crash/core.%e.%p.%t" > /proc/sys/kernel/core_pattern
+
+# Start tracing
+echo "Starting tracing session"
+if command -v lttng >/dev/null 2>&1; then
+    ./Fabric/DCA.Code/lttng_handler.sh "${FabricLogRoot}/Traces"
+else
+    echo "LTTng is not installed." >&2;
+fi
+
+/opt/microsoft/servicefabric/bin/Fabric/Fabric.Code/FabricDeployer.sh
+
+echo Starting FabricHost
+/opt/microsoft/servicefabric/bin/FabricHost --console --skipfabricsetup
