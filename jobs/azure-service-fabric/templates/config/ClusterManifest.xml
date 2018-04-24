@@ -87,17 +87,18 @@
       <Parameter Name="IsEnabled" Value="True" />
       <Parameter Name="VersionCheck" Value="True" />
     </Section>
+    <Section Name="ImageStoreService">
+      <Parameter Name="TargetReplicaSetSize" Value="3" />
+      <Parameter Name="MinReplicaSetSize" Value="1" />
+      <Parameter Name="ReplicaRestartWaitDuration" Value="5" />
+    </Section>
     <Section Name="Management">
-        <Parameter Name="ImageStoreConnectionString" Value="file:/var/vcap/store/azure-service-fabric/ImageStore" />
+        <Parameter Name="ImageStoreConnectionString" Value="fabric:ImageStore" />
     </Section>
     <Section Name="NamingService">
       <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
       <Parameter Name="TargetReplicaSetSize" Value="3" />
       <Parameter Name="MinReplicaSetSize" Value="3" />
-    </Section>
-    <Section Name="ImageStoreService">
-      <Parameter Name="TargetReplicaSetSize" Value="3" />
-      <Parameter Name="MinReplicaSetSize" Value="1" />
     </Section>
     <Section Name="PerformanceCounterLocalStore">
       <Parameter Name="IsEnabled" Value="False" />
