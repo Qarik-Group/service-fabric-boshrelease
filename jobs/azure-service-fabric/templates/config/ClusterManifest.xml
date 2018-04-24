@@ -26,14 +26,14 @@
   <Infrastructure>
     <Linux IsScaleMin="true">
       <NodeList>
-        <% link("azure-service-fabric").instances.map do |node| -%>
+        <%- link("azure-service-fabric").instances.map do |node| -%>
         <Node NodeName="<%= node.name %><%= node.index %>"
           NodeTypeRef="<%= node.name %><%= node.index %>Ref"
           IPAddressOrFQDN="<%= node.address %>"
           IsSeedNode="true"
           FaultDomain="fd:/<%= node.az %>"
           UpgradeDomain="<%= node.az %>" />
-        <% end -%>
+        <%- end -%>
       </NodeList>
     </Linux>
   </Infrastructure>
