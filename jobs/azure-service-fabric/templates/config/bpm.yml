@@ -1,7 +1,7 @@
 ---
 processes:
 - name: azure-service-fabric
-  executable: /var/vcap/jobs/azure-service-fabric/bin/ctl
+  executable: /var/vcap/jobs/azure-service-fabric/bin/run
   args: []
   ephemeral_disk: true
   persistent_disk: true

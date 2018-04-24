@@ -27,10 +27,10 @@ stemcells:
   version: latest
 
 update:
-  canaries: 2
+  canaries: 5
   canary_watch_time: 1000-60000
   update_watch_time: 1000-60000
-  max_in_flight: 3
+  max_in_flight: 5
   serial: false
 
 releases:

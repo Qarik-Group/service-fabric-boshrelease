@@ -11,6 +11,10 @@ baseDir=$BOSH_INSTALL_TARGET
 cacheDir="$baseDir/apt/cache"
 mkdir -p "$cacheDir"
 
+# https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
+ls -al /tmp
+chmod 1777 /tmp
+
 options="-o debug::nolocking=true -o dir::cache=$cacheDir"
 
 apt-get install -y apt-transport-https apt-utils
@@ -23,8 +27,6 @@ apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-apt-add-repository -y ppa:lttng/ppa
-
 # from src/service-fabric/src/prod/linuxsetup/debian/runtime/control/control.template
 apt-get update
 apt-get install ${options} -y -d \
@@ -35,7 +37,7 @@ apt-get install ${options} -y -d \
   rssh \
   sshpass \
   members \
-  libunwind8 \
+  libunwind8-dev \
   libib-util \
   acl \
   libssh2-1 \
@@ -44,7 +46,7 @@ apt-get install ${options} -y -d \
   npm \
   atop \
   libcurl3 \
-  dotnet-runtime-2.0.6 \
+  dotnet-runtime-2.0.0 \
   docker-ce \
   cgroup-bin \
   ebtables

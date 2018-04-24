@@ -4,6 +4,7 @@ name: azure-service-fabric
 packages: [service-fabric-debs, service-fabric]
 templates:
   pre-start.sh: bin/pre-start
+  bin/run: bin/run
   config/bpm.yml: config/bpm.yml
   config/ClusterManifest.xml: config/ClusterManifest.xml
 
