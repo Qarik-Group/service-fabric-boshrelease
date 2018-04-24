@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="Test Generated ClusterManifest" Version="v1" Description="Test Generated ClusterManifest" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <NodeTypes>
-    <NodeType Name="N<%= spec.name %>Ref">
+    <NodeType Name="<%= spec.name %><%= spec.index %>Ref">
       <Endpoints>
         <!-- see ServiceFabricServiceModel.xsd under FabricEndpointsType -->
         <ClientConnectionEndpoint Port="19000" />
@@ -25,13 +25,15 @@
   </NodeTypes>
   <Infrastructure>
     <Linux IsScaleMin="true">
-      <NodeList> <!-- TODO list of instances in link -->
-        <Node NodeName="N<%= spec.name %>"
-          NodeTypeRef="N<%= spec.name %>Ref"
-          IPAddressOrFQDN="<%= spec.address %>"
+      <NodeList>
+        <% link("azure-service-fabric").instances.map do |node| -%>
+        <Node NodeName="<%= node.name %><%= node.index %>"
+          NodeTypeRef="<%= node.name %><%= node.index %>Ref"
+          IPAddressOrFQDN="<%= node.address %>"
           IsSeedNode="true"
-          FaultDomain="fd:/<%= spec.az %>"
-          UpgradeDomain="<%= spec.az %>" />
+          FaultDomain="fd:/<%= node.az %>"
+          UpgradeDomain="<%= node.az %>" />
+        <% end -%>
       </NodeList>
     </Linux>
   </Infrastructure>

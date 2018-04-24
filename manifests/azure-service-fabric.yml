@@ -28,8 +28,8 @@ stemcells:
 
 update:
   canaries: 5
-  canary_watch_time: 1000-60000
-  update_watch_time: 1000-60000
+  canary_watch_time: 1000-20000
+  update_watch_time: 1000-20000
   max_in_flight: 5
   serial: false
 
