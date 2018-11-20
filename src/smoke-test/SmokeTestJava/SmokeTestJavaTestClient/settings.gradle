@@ -1,0 +1,3 @@
+include ':SmokeTestJavaInterface'
+
+project(':SmokeTestJavaInterface').projectDir = new File(settingsDir, '../SmokeTestJavaInterface')

@@ -1,0 +1,142 @@
+---
+name: service-fabric
+
+packages:
+- service-fabric
+- openjdk
+- python-3.6
+- sfctl
+- jq
+- ttar
+
+templates:
+  bin/pre-start.sh: bin/pre-start
+  bin/post-start.sh: bin/post-start
+  bin/post-stop.sh: bin/post-stop
+  bin/post-deploy.sh: bin/post-deploy
+  bin/drain.sh: bin/drain
+  bin/ctl: bin/ctl
+  bin/fabric-setup: bin/fabric-setup
+  bin/monit_debugger: bin/monit_debugger
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  config/certs/certs.ttar: config/certs/certs.ttar
+  config/ClusterManifest.xml: config/ClusterManifest.xml
+
+# Documentation https://bosh.io/docs/links.html
+# Tutorial      https://gist.github.com/Amit-PivotalLabs/c39528248b8cdc4ba8e347f8aa68abb6
+consumes:
+- name: service-fabric
+  type: service-fabric
+
+provides:
+- name: service-fabric
+  type: service-fabric
+  properties:
+    - ClientConnectionEndpoint
+    - LeaseDriverEndpoint
+    - ClusterConnectionEndpoint
+    - ServiceConnectionEndpoint
+    - HttpGatewayEndpoint
+    - HttpApplicationGatewayEndpoint
+    - ApplicationEndpoints.Start
+    - ApplicationEndpoints.End
+    - TLS.enable
+    - TLS.cluster_certificates
+
+properties:
+  ClientConnectionEndpoint:
+    description: Port for ClientConnection
+    default: 19000
+  LeaseDriverEndpoint:
+    description: Port for LeaseDriver
+    default: 19001
+  ClusterConnectionEndpoint:
+    description: Port for ClusterConnection
+    default: 19002
+  ServiceConnectionEndpoint:
+    description: Port for ServiceConnection
+    default: 19006
+  HttpGatewayEndpoint:
+    description: Port for HttpGateway
+    default: 19080
+  HttpApplicationGatewayEndpoint:
+    description: Port for HttpApplicationGateway
+    default: 19081
+  ApplicationEndpoints.Start:
+    description: Start port for application endpoints
+    default: 22001
+  ApplicationEndpoints.End:
+    description: End port for application endpoints
+    default: 23000
+  TLS.enable:
+    description: Enable x509 certificate authentication for service-fabric
+    default: false
+  TLS.cluster_certificates:
+    description: |
+      TLS private key (PEM encoded), used for intra Cluster communication, HTTPS API, and Web UI.
+      Each element in the array is an object containing the field 'certificate', each of which 
+      supports a PEM block.
+    example:
+      TLS.cluster_certificates:
+        primary:
+          certificate: |
+            -----BEGIN CERTIFICATE-----
+            -----END CERTIFICATE-----
+          key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            -----END RSA PRIVATE KEY-----
+        secondary:
+          certificate: |
+            -----BEGIN CERTIFICATE-----
+            -----END CERTIFICATE-----
+          key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            -----END RSA PRIVATE KEY-----
+  TLS.admin_client_certificates:
+    description: |
+      Array of Certificates used by clients in admin role. Each element in the array is an object containing the field 'certificate',
+      each of which supports a PEM block.
+    example:
+      TLS.admin_client_certificates:
+        admin_user_one:
+          certificate: |
+            -----BEGIN CERTIFICATE-----
+            -----END CERTIFICATE-----
+  TLS.client_certificates:
+    description: |
+      Array of Certificates used by clients in read-only role. Each element in the array is an object containing the field 'certificate',
+      each of which supports a PEM block.
+    example:
+      TLS.client_certificates:
+        read_only_user_one:
+          certificate: |
+            -----BEGIN CERTIFICATE-----
+            -----END CERTIFICATE-----
+  CpuPercentageNodeCapacity:
+    description: Percentage of CPU Service Fabric is allowed to use.
+    default: 0.8
+  MemoryPercentageNodeCapacity:
+    description: Percentage of Memory Service Fabric is allowed to use.
+    default: 0.8
+  MinLoadBalancingInterval:
+    description: Defines the minimum amount of time that must pass before two consecutive balancing rounds.
+    default: 5
+  TargetReplicaSetSize:
+    description: |
+      The number of replica sets for each partition. Increasing the number of replica sets increases the level 
+      of reliability for information; decreasing the chance that the information will be lost as a result of node failures;
+      at a cost of increased load on Service Fabric and the amount of time it takes to perform updates.
+  MinReplicaSetSize:
+    description: |
+      Defines the minimum number of replicas required to write into to complete an update.
+      This value should never be more than the TargetReplicaSetSize.
+  SeedNodes:
+    description: |
+      Defines the number of seed nodes to be created with the cluster. By default this is 5
+      and the recommended value is up to 11. Note: If you plan on scaling down ensure that half+1
+      of the seed nodes remain in order to maintain quorum and avoid cluster collapse.
+    default: 5
+  dev.force_package_installation:
+    description: Force (re)install Debian packages. Allows for testing of jobs on existing instances.
+    default: false

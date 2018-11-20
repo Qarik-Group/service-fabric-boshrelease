@@ -1,0 +1,24 @@
+builds:
+  2e7249a3-7928-4bb6-71a5-b7b8aca9cf87:
+    version: 0.2.0
+  3cea8922-6513-4ba2-59ae-afa9418e47e7:
+    version: 0.4.0
+  3ed21f48-346c-443b-5ac7-6c7d34792317:
+    version: 0.7.0
+  41f1930e-3fdb-46e8-6454-3d73a640876f:
+    version: 0.3.0
+  6f247a38-5de5-490b-74c7-e2b957782191:
+    version: 0.2.1
+  7ac1765c-dc7b-4437-6a19-e84235d2e7be:
+    version: 0.1.1
+  8090fcff-dfc9-4388-75c3-4e70b6772f7c:
+    version: 0.1.0
+  864cd24f-7053-45db-6f1d-e6ee603f52da:
+    version: 0.6.0
+  97b92338-472d-4175-67af-8705b20cc5f4:
+    version: 0.5.2
+  a897cf67-77d4-4c4a-602c-dfaacd9c8c10:
+    version: 0.5.0
+  c7f0386e-de34-4e11-492d-4d78be3ec642:
+    version: 0.5.1
+format-version: "2"

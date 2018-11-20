@@ -1,0 +1,7 @@
+set -eux
+
+source /var/vcap/packages/python-*/bosh/compile.env
+
+bosh_generate_runtime_env
+
+bosh_pip sfctl

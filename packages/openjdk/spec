@@ -1,0 +1,5 @@
+---
+name: openjdk
+dependencies: []
+files:
+- openjdk/openjdk.tar.gz

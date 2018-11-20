@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -eux
+
+# Available variables
+# $BOSH_COMPILE_TARGET - where this package & spec'd source files are available
+# $BOSH_INSTALL_TARGET - where you copy/install files to be included in package
+export HOME=/var/vcap
+
+baseDir=$BOSH_INSTALL_TARGET
+cacheDir="$baseDir/apt/cache"
+mkdir -p "$cacheDir"
+
+# https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
+ls -al /tmp
+chmod 1777 /tmp
+
+apt-get update --fix-missing
+apt-get install -y apt-transport-https apt-utils
+
+sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/servicefabric/ xenial main" > /etc/apt/sources.list.d/servicefabric.list'
+wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+dpkg -i packages-microsoft-prod.deb
+
+apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# from src/service-fabric/src/prod/linuxsetup/debian/runtime/control/control.template
+apt-get update --fix-missing
+apt-get install -o debug::nolocking=true -o dir::cache=$cacheDir -y -d servicefabricsdkcommon=1.3.0 servicefabric=6.3.129.1
+cd $cacheDir/archives
+# grab any and all potential dependencies
+apt-get download $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --no-pre-depends servicefabricsdkcommon | grep "^\w" | grep -v "i386" | sort -u)
+
+dpkg-scanpackages -m . /dev/null | gzip -9c > Packages.gz
+
+# pass version info to pre-start to allow for upgrades and downgrades without recreate
+dpkg-deb --showformat='${Version}' --show servicefabric_* > servicefabric.version
+dpkg-deb --showformat='${Version}' --show servicefabricsdkcommon_* > servicefabricsdkcommon.version

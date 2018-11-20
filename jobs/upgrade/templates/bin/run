@@ -1,0 +1,60 @@
+#!/bin/bash
+
+exec 2>&1
+
+set -eu
+
+source /var/vcap/jobs/upgrade/helpers/utils.sh
+source /var/vcap/packages/sfctl/bosh/runtime.env
+export PATH=/var/vcap/packages/jq/bin:$PATH
+
+SECONDS=0
+RETRIES=0
+
+RETRY_DELAY=30
+RETRY_COUNT=40
+echo "*** Trying to target cluster - ${SECONDS}s"
+retry select_cluster
+
+chmod 1777 /tmp
+
+echo "*** Setting up package download requirements - ${SECONDS}s"
+apt-get update --fix-missing
+apt-get install -y apt-transport-https apt-utils
+
+sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/servicefabric/ xenial main" > /etc/apt/sources.list.d/servicefabric.list'
+wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+dpkg -i packages-microsoft-prod.deb
+
+apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
+
+echo "*** Downloading 'servicefabric' deb from apt repository"
+apt-get update --fix-missing
+
+<% version = p("FabricCodeVersion", "latest") %>
+<% if version == "latest" %>
+apt-get download servicefabric
+<% else %>
+apt-get download servicefabric=<%= version %>
+<% end %>
+
+FABRIC_VERSION=$(dpkg-deb --showformat='${Version}' --show servicefabric_*)
+
+echo "*** Uploading code package to ServiceFabric Cluster"
+mkdir -p /tmp/service-fabric-upgrade
+cp servicefabric_${FABRIC_VERSION}_amd64.deb /tmp/service-fabric-upgrade/servicefabric_${FABRIC_VERSION}.deb
+pushd /tmp
+    sfctl application upload --path service-fabric-upgrade --show-progress
+    sfctl cluster provision --code-file-path service-fabric-upgrade/servicefabric_${FABRIC_VERSION}.deb
+popd
+rm -rf /tmp/service-fabric-upgrade
+
+echo "*** Running Cluster Upgrade - ${SECONDS}s"
+sfctl cluster upgrade --code-version ${FABRIC_VERSION}
+
+RETRY_BAIL_COMMAND="echo \"Baseline Upgrade for cluster at <%= link("service-fabric").instances[0].address %>:<%= link("service-fabric").p("HttpGatewayEndpoint") %>\" failed or timed-out after ${SECONDS}s"
+RETRY_FAIL_COMMAND=upgrade_status
+RETRY_DELAY=30
+RETRY_COUNT=960
+retry check_cluster_upgrade

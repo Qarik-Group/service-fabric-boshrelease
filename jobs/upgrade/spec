@@ -1,0 +1,21 @@
+---
+name: upgrade
+
+packages:
+- python-3.6
+- sfctl
+- jq
+
+templates:
+  bin/run: bin/run
+  helpers/utils.sh: helpers/utils.sh
+
+consumes:
+- name: service-fabric
+  type: service-fabric
+
+properties:
+  FabricCodeVersion:
+    description: Target Fabric Code Version for Cluster Upgrade - desired version
+      will be pulled from apt repository. If not specified the newest available
+      version will be selected.

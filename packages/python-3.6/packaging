@@ -1,0 +1,44 @@
+set -eu
+
+echo "Copying compile.env..."
+mkdir ${BOSH_INSTALL_TARGET}/bosh
+cp python-pkg/runtime.env ${BOSH_INSTALL_TARGET}/bosh/runtime.env
+cp python-pkg/compile.env ${BOSH_INSTALL_TARGET}/bosh/compile.env
+
+echo "Extracting python..."
+tar xzvf python/Python-*.tgz
+
+echo "Building python..."
+pushd Python-*
+  ./configure --prefix=$BOSH_INSTALL_TARGET
+  make
+  make install
+popd
+
+echo "Extracting setuptools..."
+unzip python/setuptools-*.zip
+
+echo "Creating the setuptools site packages..."
+mkdir -p $BOSH_INSTALL_TARGET/lib/python*/site-packages
+
+echo "Setting the PYTHONPATH with setuptools site packages..."
+export PYTHONPATH=$(ls -d $BOSH_INSTALL_TARGET/lib/python*/site-packages)
+
+echo "Installing setuptools..."
+pushd setuptools-*
+  $BOSH_INSTALL_TARGET/bin/python3 setup.py install --prefix=$BOSH_INSTALL_TARGET
+popd
+
+echo "Extracting pip..."
+tar xzvf python/pip-*.tar.gz
+
+echo "Creating the pip site packages..."
+mkdir -p $BOSH_INSTALL_TARGET/lib/python*/site-packages
+
+echo "Setting the PYTHONPATH with setuptools and pip site packages..."
+export PYTHONPATH=$(ls -d $BOSH_INSTALL_TARGET/lib/python*/site-packages):$PYTHONPATH
+
+echo "Installing pip..."
+pushd pip-*
+  $BOSH_INSTALL_TARGET/bin/python3 setup.py install --prefix=$BOSH_INSTALL_TARGET
+popd

@@ -1,0 +1,72 @@
+---
+name: azure-service-fabric
+
+instance_groups:
+- name: service-fabric
+  azs: [z1,z2,z3]
+  instances: 5
+  vm_type: service-fabric
+  stemcell: default
+  networks: [{name: service-fabric}]
+  env:
+    bosh:
+      ipv6: {enable: true}
+      swap_size: 0
+  jobs:
+  - name: service-fabric
+    release: azure-service-fabric
+    properties: {}
+  - name: repair
+    release: azure-service-fabric
+    properties: {}
+
+- name: smoke-test
+  azs: [z1]
+  instances: 1
+  lifecycle: errand
+  vm_type: small
+  stemcell: default
+  networks: [{name: service-fabric}]
+  env:
+    bosh:
+      ipv6: {enable: true}
+  jobs:
+  - name: smoke-test
+    release: azure-service-fabric
+
+- name: upgrade
+  azs: [z1]
+  instances: 1
+  lifecycle: errand
+  vm_type: small
+  stemcell: default
+  networks: [{name: service-fabric}]
+  env:
+    bosh:
+      ipv6: {enable: true}
+  jobs:
+  - name: upgrade
+    release: azure-service-fabric
+
+variables: []
+
+stemcells:
+- alias: default
+  os: ubuntu-xenial
+  version: 97.16
+
+update:
+  canaries: 5
+  max_in_flight: 1
+  canary_watch_time: 1000-10000
+  update_watch_time: 1000-10000
+  serial: false
+
+releases:
+- name: azure-service-fabric
+  sha1: 413321b56323961027f72f4d98cf3e60f93e073d
+  stemcell:
+    os: ubuntu-xenial
+    version: "97.28"
+  url: https://s3.amazonaws.com/azure-service-fabric-boshrelease/compiled-releases/azure-service-fabric/azure-service-fabric-0.7.0-ubuntu-xenial-97.28-20181029-225240-828457572-20181029225634.tgz
+  version: 0.7.0

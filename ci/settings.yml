@@ -1,0 +1,42 @@
+---
+meta:
+  name:    azure-service-fabric
+  target:  service-fabric
+  url:     https://pipes.starkandwayne.com
+
+  test-errand: ~
+
+  initial_version: 0.1.0
+
+  git:
+    email:  ((git.email))
+    name:   ((git.name))
+
+  bosh:
+    target:   ((bosh.environment))
+    cacert:   ((bosh.ca-cert))
+    username: ((bosh.client))
+    password: ((bosh.client-secret))
+
+  manifest:
+    operator_file_paths: "manifests/operators/single-az.yml"
+  aws:
+    bucket:      (( grab meta.pipeline ))
+    region_name: us-east-1
+    access_key:  ((cfcommunity.access))
+    secret_key:  ((cfcommunity.secret))
+
+  github:
+    owner:  starkandwayne
+    repo:   (( grab meta.pipeline ))
+    branch: master
+    private_key:  ((github.private-key))
+    access_token: ((github.access-token))
+
+  # slack:
+  #   webhook:       ((slack-webhook))
+  #   username:      ((slack-username))
+  #   icon:          ((slack-icon-url))
+  #   channel:       (( concat meta.name "-boshrelease" ))
+  #   blob_success:  '(( concat ": New version of  was detected, and updated in master. <" meta.url "/teams//pipelines/| Cut a new release?>" ))'
+  #   blob_failure:  '(( concat ": :airplane_arriving: <" meta.url "/teams//pipelines//jobs//builds/| Failed to update the blob for >" ))'

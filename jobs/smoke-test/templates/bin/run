@@ -1,0 +1,48 @@
+#!/bin/bash
+
+exec 2>&1
+
+set -eu
+
+source /var/vcap/jobs/smoke-test/helpers/utils.sh
+source /var/vcap/packages/sfctl/bosh/runtime.env
+export PATH=/var/vcap/packages/jq/bin:$PATH
+
+SECONDS=0
+TESTDIR=/var/vcap/packages/smoke-test
+RETRIES=0
+HEALTHY=true
+
+RETRY_DELAY=10
+RETRY_COUNT=5
+echo "*** Trying to target cluster - ${SECONDS}s"
+retry select_cluster
+
+for smoketest in $(ls -1 $TESTDIR | grep -v *.sh); do
+  pushd $TESTDIR/$smoketest
+    echo "Installing $smoketest to the cluster"
+    ./install.sh
+    echo "Waiting for $smoketest to build..."
+    sleep 60
+    echo "*** Waiting for healthy application - ${SECONDS}s"
+    until [[ "$(sfctl application info --application-id $smoketest | jq -r .healthState)" == "Ok" ]]; do
+      healthState=$(sfctl application info --application-id $smoketest | jq -r .healthState)
+      if [[ -z "${healthState// }" ]]; then
+        echo "Application '$smoketest' not found in SF Cluster"
+      fi
+      echo "SmokeTest Health State:$healthState - ${SECONDS}s"
+      ((RETRIES++))
+      if [[ $RETRIES == 10 ]]; then
+        HEALTHY=false
+        break
+      fi
+      sleep 30
+    done
+    echo "SmokeTest Health State: $(sfctl application info --application-id $smoketest | jq -r .healthState) - ${SECONDS}s"
+    echo "Removing $smoketest from the cluster"
+    ./uninstall.sh
+    if ! [[ $HEALTHY == true ]]; then
+      exit 1
+    fi
+  popd
+done

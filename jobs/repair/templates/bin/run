@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export PATH=$PATH:/var/vcap/bosh/bin/
+
+echo "Restarting the monit daemon..."
+for i in {1..5}; do
+    monit unmonitor service-fabric
+    killall monit
+    sleep 1 
+done

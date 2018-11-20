@@ -1,0 +1,9 @@
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/bin/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.deps.json
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/bin/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.dll
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/bin/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.pdb
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/obj/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.csprojAssemblyReference.cache
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/obj/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.csproj.CoreCompileInputs.cache
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/obj/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.AssemblyInfoInputs.cache
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/obj/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.AssemblyInfo.cs
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/obj/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.dll
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharp.Interfaces/obj/Debug/netstandard2.0/SmokeTestCSharp.Interfaces.pdb

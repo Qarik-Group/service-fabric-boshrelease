@@ -1,0 +1,10 @@
+{
+  "generator-azuresfjava": {
+    "projName": "HelloWorldActorApplication",
+    "frameworkType": "Reliable Actor Service",
+    "author": "<your name>"
+  },
+  "generator-azuresfcontainer": {
+    "projName": "smoke-test"
+  }
+}

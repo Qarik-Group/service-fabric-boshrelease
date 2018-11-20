@@ -1,0 +1,5 @@
+check process service-fabric
+  with pidfile /var/run/servicefabric.pid
+  start program "/var/vcap/jobs/service-fabric/bin/monit_debugger ctl '/var/vcap/jobs/service-fabric/bin/ctl start'"
+  stop program "/var/vcap/jobs/service-fabric/bin/monit_debugger ctl '/var/vcap/jobs/service-fabric/bin/ctl stop'"
+  group vcap

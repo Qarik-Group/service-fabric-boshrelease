@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# Based on servicefabric.service
+
+set -eu
+
+check_errs()
+{
+  # Function. Parameter 1 is the return code
+  if [ "${1}" -ne "0" ]; then
+    echo Operation ${2} failed with exit code ${1} 
+    exit ${1}
+  fi
+}
+
+echo "Setting environment for FabricDeployer to run"
+if [ ! -d /etc/servicefabric ]; then
+    mkdir /etc/servicefabric
+fi
+
+store_dir=/var/vcap/store
+if [[ $(findmnt -m "$store_dir") ]]; then
+    echo "Persistent Storage Mounted"
+else
+    echo "Persistent Storage Not mounted -> Defaulting to Ephemeral Storage"
+    store_dir=/var/vcap/data
+fi
+
+# I think required/available env vars are in src/prod/src/Common/FabricEnvironment.cpp
+export FabricBinRoot=/opt/microsoft/servicefabric/bin
+export FabricCodePath=${FabricBinRoot}/Fabric/Fabric.Code
+
+# FabricDataRoot=/var/vcap/store/service-fabric
+export FabricDataRoot=$store_dir/service-fabric/sfcluster/data
+export FabricLogRoot=/var/vcap/sys/log/service-fabric/FabricLogRoot
+
+ClusterManifest=/var/vcap/jobs/service-fabric/config/ClusterManifest.xml
+
+echo -n ${FabricDataRoot} > /etc/servicefabric/FabricDataRoot
+echo -n ${FabricLogRoot}  > /etc/servicefabric/FabricLogRoot
+echo -n ${FabricBinRoot}  > /etc/servicefabric/FabricBinRoot
+echo -n ${FabricCodePath} > /etc/servicefabric/FabricCodePath
+
+echo Adding sfuser to vcap group
+usermod -a -G vcap sfuser
+
+
+echo Setting sfuser as owner for FabricDataRoot
+mkdir -p ${FabricDataRoot}
+chown -R sfuser:sfuser ${FabricDataRoot}
+
+echo Setting sfuser as owner of FabricBinRoot
+chown -R sfuser:sfuser ${FabricBinRoot}
+
+echo Setting sfuser as owner of FabricLogRoot
+mkdir -p ${FabricLogRoot}/Traces
+chown -R sfuser:sfuser ${FabricLogRoot}
+
+echo Setting sfuser/sfappsuser read perms
+chmod 775 $store_dir/service-fabric/
+chmod 775 $store_dir/service-fabric/sfcluster
+
+# Add service fabric ImageStoreService users to allow ssh
+containsUser() { [ -z "${2##*$1*}" ]; }
+if ! containsUser 'P_FSSUserffffffff' $(getent group bosh_sshers);
+then
+    sed -i '/bosh_sshers:x:/ s/$/,P_FSSUserffffffff,S_FSSUserffffffff/' /etc/group
+fi
+
+# Add service fabric ImageStoreService users to FS access
+if ! containsUser 'P_FSSUserffffffff' $(getent group vcap);
+then
+    sed -i '/vcap:x:/ s/$/,P_FSSUserffffffff,S_FSSUserffffffff/' /etc/group
+fi
+
+# Note: /fubar in the PATH is due to SF adding a ';' corrupting the first entry
+export LD_LIBRARY_PATH=${FabricCodePath}
+export PATH=/fubar:/var/vcap/packages/openjdk/bin:$PATH
+
+echo Running FabricDeployer on ${ClusterManifest}
+if [ "${InfraManifest:-X}" == "X" ]; then
+    ${FabricCodePath}/FabricDeployer.sh /operation:Create /fabricBinRoot:${FabricBinRoot} /fabricDataRoot:${FabricDataRoot} /cm:${ClusterManifest}
+else
+    ${FabricCodePath}/FabricDeployer.sh /operation:Create /fabricBinRoot:${FabricBinRoot} /fabricDataRoot:${FabricDataRoot} /cm:${ClusterManifest} /im:${InfraManifest}
+fi
+
+#CLEANUP??
+echo Setting sfuser as owner for FabricDataRoot
+chown -R sfuser:sfuser ${FabricDataRoot}
+
+echo Setting sfuser as owner of FabricBinRoot
+chown -R sfuser:sfuser ${FabricBinRoot}
+
+#Overwrite systemd service to incluse a pidfile and path for starthost
+cat >/etc/systemd/system/servicefabric.service <<EOF
+[Unit]
+Description=ServiceFabric Daemon
+
+[Service]
+Type=simple
+ExecStart=/opt/microsoft/servicefabric/bin/starthost.sh
+WorkingDirectory=/opt/microsoft/servicefabric/bin
+Environment="PATH=/fubar:/var/vcap/packages/openjdk/bin:/var/vcap/bosh/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStartPost=/bin/sh -c 'umask 022; pgrep starthost.sh > /var/run/servicefabric.pid'
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl start servicefabric

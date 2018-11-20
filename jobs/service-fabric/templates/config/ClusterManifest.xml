@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<%-
+admin_client_certs = Array.new
+if_p("TLS.admin_client_certificates") do |pem|
+  pem.each do |name, cert|
+    cert.each do |name, value|
+      pem_block = value.strip
+      File.write("/tmp/service-fabric.crt", pem_block, mode: 'a')
+      thumbprint = `openssl x509 -in /tmp/service-fabric.crt -out /dev/stdout -outform der | sha1sum | awk '{printf "%s", toupper($1)}'`
+      File.delete("/tmp/service-fabric.crt")
+      admin_client_certs << thumbprint
+    end
+  end
+  admin_client_certs.uniq!
+end
+%>
+<%-
+client_certs = Array.new
+if_p("TLS.client_certificates") do |pem|
+  pem.each do |name, cert|
+    cert.each do |name, value|
+      pem_block = value.strip
+      File.write("/tmp/service-fabric.crt", pem_block, mode: 'a')
+      thumbprint = `openssl x509 -in /tmp/service-fabric.crt -out /dev/stdout -outform der | sha1sum | awk '{printf "%s", toupper($1)}'`
+      File.delete("/tmp/service-fabric.crt")
+      client_certs << thumbprint
+    end
+  end
+  client_certs.uniq!
+end
+%>
+<%-
+cluster_certs = Array.new
+primary_thumbprint = ""
+secondary_thumbprint = ""
+if_p("TLS.cluster_certificates") do |pem|
+  pem.each do |name, cert|
+    if !cert.has_key? "certificate" or !cert.has_key? "key"
+      raise "Certificate or Key not provided for '#{name}'"
+    end
+    cert.each do |type, value|
+      pem_block = value.strip
+      File.write("/tmp/service-fabric.crt", pem_block, mode: 'a')
+      thumbprint = `openssl x509 -in /tmp/service-fabric.crt -out /dev/stdout -outform der | sha1sum | awk '{printf "%s", toupper($1)}'`
+      File.delete("/tmp/service-fabric.crt")
+      if type == "certificate"
+        if name == "primary"
+          primary_thumbprint = thumbprint
+        end
+        if name == "secondary"
+          secondary_thumbprint = thumbprint
+        end
+        cluster_certs << thumbprint
+      end
+    end
+  end
+    cluster_certs.uniq!
+end
+
+# default spec above 7 vms as per msft docs - we ensure a minimum of 5 vms
+# need a buffer of 1 vm above targetsetsize to allow for proper draining
+defaultTargetSize = 7
+defaultMinSize = 5
+if link("service-fabric").instances.size < 8
+  defaultTargetSize = link("service-fabric").instances.size - 1
+  defaultMinSize = 3
+end
+targetreplicasetsize=p('TargetReplicaSetSize', defaultTargetSize)
+minreplicasetsize=p('MinReplicaSetSize', defaultMinSize)
+
+if targetreplicasetsize > (link("service-fabric").instances.size - 1)
+  raise "The TargetReplicaSetSize is configured to be #{targetreplicasetsize} but with the current 
+        number of nodes, the maximum supported value is #{(link("service-fabric").instances.size - 1)}"
+end
+
+if minreplicasetsize > (link("service-fabric").instances.size - 1)
+  raise "The MinReplicaSetSize is configured to be #{minreplicasetsize} but with the current number
+        of nodes, the maximum supported value is #{(link("service-fabric").instances.size - 1)}"
+end
+%>
+
+<ClusterManifest
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://schemas.microsoft.com/2011/01/fabric"
+    Name="Local-Cluster"
+    Version="1.0">
+  <NodeTypes>
+    <NodeType Name="BOSH">
+      <Endpoints>
+        <!-- see ServiceFabricServiceModel.xsd under FabricEndpointsType -->
+        <ClientConnectionEndpoint Port="<%= p('ClientConnectionEndpoint') %>" />
+        <LeaseDriverEndpoint Port="<%= p('LeaseDriverEndpoint') %>" />
+        <ClusterConnectionEndpoint Port="<%= p('ClusterConnectionEndpoint') %>" />
+        <ServiceConnectionEndpoint Port="<%= p('ServiceConnectionEndpoint') %>" />
+        <%- if p("TLS.enable") == true %>
+        <HttpGatewayEndpoint Port="<%= p('HttpGatewayEndpoint') %>" Protocol="https" />
+        <HttpApplicationGatewayEndpoint Port="<%= p('HttpApplicationGatewayEndpoint') %>" Protocol="https" />
+        <%- else %>
+        <HttpGatewayEndpoint Port="<%= p('HttpGatewayEndpoint') %>" Protocol="http" />
+        <HttpApplicationGatewayEndpoint Port="<%= p('HttpApplicationGatewayEndpoint') %>" Protocol="http" />
+        <%- end %>
+        <ApplicationEndpoints StartPort="<%= p('ApplicationEndpoints.Start') %>" EndPort="<%= p('ApplicationEndpoints.End') %>" />
+      </Endpoints>
+      <%- if p("TLS.enable") == true %>
+      <Certificates>
+        <ClusterCertificate X509FindValue="<%= primary_thumbprint %>" X509FindValueSecondary="<%= secondary_thumbprint %>"/>
+        <ServerCertificate X509FindValue="<%= primary_thumbprint %>" X509FindValueSecondary="<%= secondary_thumbprint %>"/>
+        <ClientCertificate X509FindValue="<%= primary_thumbprint %>" X509FindValueSecondary="<%= secondary_thumbprint %>"/>
+      </Certificates>
+      <%- end %>
+    </NodeType>
+  </NodeTypes>
+  <Infrastructure>
+    <Linux IsScaleMin="false">
+      <NodeList>
+        <%- link("service-fabric").instances.map.sort_by{|node| node.index}.each_with_index do |node, index| %>
+        <Node NodeName="<%= node.name %>-<%= node.id %>"
+          NodeTypeRef="BOSH"
+          IPAddressOrFQDN="<%= node.address %>"
+          <%- if index < p('SeedNodes') %>
+          IsSeedNode="true"
+          <%- else %>
+          IsSeedNode="false"
+          <%- end %>
+          FaultDomain="fd:/<%= node.az %>"
+          UpgradeDomain="<%= node.address %>" />
+        <%- end %>
+      </NodeList>
+    </Linux>
+  </Infrastructure>
+  <FabricSettings>
+    <Section Name="FailoverManager">
+        <!-- expected cluster size allows the placement to start when the cluster is started. This value should be less than total number of nodes
+              as without it the FailoverManager will not start the placement of the user services. This value should be 80% to 90% of the cluster size.
+        -->
+        <Parameter Name="ExpectedClusterSize" Value="<%= (link("service-fabric").instances.size * 0.8).floor %>" />
+        <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
+        <Parameter Name="TargetReplicaSetSize" Value="<%= targetreplicasetsize %>" />
+        <Parameter Name="MinReplicaSetSize" Value="<%= minreplicasetsize %>" />
+        <Parameter Name="ReconfigurationTimeLimit" Value="20" />
+        <Parameter Name="BuildReplicaTimeLimit" Value="20" />
+        <Parameter Name="CreateInstanceTimeLimit" Value="20" />
+        <Parameter Name="PlacementTimeLimit" Value="20" />
+    </Section>
+    <Section Name="ReconfigurationAgent">
+        <Parameter Name="ServiceApiHealthDuration" Value="20" />
+        <Parameter Name="ServiceReconfigurationApiHealthDuration" Value="20" />
+        <Parameter Name="LocalHealthReportingTimerInterval" Value="5" />
+        <Parameter Name="IsDeactivationInfoEnabled" Value="true" />
+        <Parameter Name="RAUpgradeProgressCheckInterval" Value="3" />
+    </Section>
+    <Section Name="ClusterManager">
+        <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
+        <Parameter Name="TargetReplicaSetSize" Value="<%= targetreplicasetsize %>" />
+        <Parameter Name="MinReplicaSetSize" Value="<%= minreplicasetsize %>" />
+        <Parameter Name="UpgradeStatusPollInterval" Value="5" />
+        <Parameter Name="UpgradeHealthCheckInterval" Value="5" />
+        <Parameter Name="FabricUpgradeHealthCheckInterval" Value="5" />
+    </Section>
+    <Section Name="NamingService">
+        <!-- The default target and min replica set sizes are 7 and 5. The below configuration is not required for cluster that have 7 or more nodes.  -->
+        <Parameter Name="TargetReplicaSetSize" Value="<%= targetreplicasetsize %>" />
+        <Parameter Name="MinReplicaSetSize" Value="<%= minreplicasetsize %>" />
+    </Section>
+    <Section Name="ImageStoreService">
+      <Parameter Name="TargetReplicaSetSize" Value="<%= targetreplicasetsize %>" />
+      <Parameter Name="MinReplicaSetSize" Value="<%= minreplicasetsize %>" />
+    </Section>
+    <Section Name="FileStoreService">
+      <Parameter Name="AnonymousAccessEnabled" Value="false" />
+      <Parameter Name="GenerateV1CommonNameAccount" Value="false" />
+      <Parameter Name="PrimaryAccountType" Value="LocalUser"/>
+      <Parameter Name="PrimaryAccountNTLMPasswordSecret" Value="Foo"/>
+      <Parameter Name="SecondaryAccountType" Value="LocalUser"/>
+      <Parameter Name="SecondaryAccountNTLMPasswordSecret" Value="Bar"/>
+      <%- if p("TLS.enable") == true %>
+      <Parameter Name="PrimaryAccountNTLMX509StoreLocation" Value="LocalMachine" />
+      <Parameter Name="PrimaryAccountNTLMX509StoreName" Value="My" />
+      <Parameter Name="PrimaryAccountNTLMX509Thumbprint" Value="<%= primary_thumbprint %>" />
+      <Parameter Name="SecondaryAccountNTLMX509StoreLocation" Value="LocalMachine" />
+      <Parameter Name="SecondaryAccountNTLMX509StoreName" Value="My" />
+      <Parameter Name="SecondaryAccountNTLMX509Thumbprint" Value="<%= primary_thumbprint %>" />
+      <%- end %>
+    </Section>
+    <Section Name="Security">
+    <%- if p("TLS.enable") == true %>
+      <Parameter Name="AdminClientCertThumbprints" Value="<%= (admin_client_certs << cluster_certs).flatten!.join(",") %>" />
+      <Parameter Name="ClientCertThumbprints" Value="<%= (client_certs << cluster_certs).flatten!.join(",") %>" />
+      <Parameter Name="ClientRoleEnabled" Value="true" />
+      <Parameter Name="ClusterCertThumbprints" Value="<%= cluster_certs.join(",") %>" />
+      <Parameter Name="ClusterCredentialType" Value="X509" />
+      <Parameter Name="ClusterProtectionLevel" Value="EncryptAndSign" />
+      <Parameter Name="IgnoreCrlOfflineError" Value="true" />
+      <Parameter Name="ServerAuthCredentialType" Value="X509" />
+      <Parameter Name="ServerCertThumbprints" Value="<%= cluster_certs.join(",") %>" />
+    <%- else %>
+      <Parameter Name="ClusterCredentialType" Value="None" />
+      <Parameter Name="ServerAuthCredentialType" Value="None" />
+    <%- end %>
+    </Section>
+    <Section Name="Management">
+        <Parameter Name="ImageStoreConnectionString" Value="fabric:ImageStore" />
+        <Parameter Name="ImageCachingEnabled" Value="false" />
+        <Parameter Name="EnableDeploymentAtDataRoot" Value="true"/>
+    </Section>
+    <Section Name="Hosting">
+        <Parameter Name="EndpointProviderEnabled" Value="true" />
+        <Parameter Name="RunAsPolicyEnabled" Value="true" />
+        <Parameter Name="DeactivationScanInterval" Value="60" />
+        <Parameter Name="DeactivationGraceInterval" Value="10" />
+        <Parameter Name="EnableProcessDebugging" Value="true" />
+        <Parameter Name="ServiceTypeRegistrationTimeout" Value="20" />
+        <Parameter Name="CacheCleanupScanInterval" Value="300" />
+    </Section>
+    <Section Name="HttpGateway">
+        <Parameter Name="IsEnabled" Value="true" />
+    </Section>
+    <Section Name="PlacementAndLoadBalancing">
+        <!-- balance the load on the cluster every 5 minutes.  -->
+        <Parameter Name="CpuPercentageNodeCapacity" Value="<%= p('CpuPercentageNodeCapacity') %>" />
+        <Parameter Name="MemoryPercentageNodeCapacity" Value="<%= p('MemoryPercentageNodeCapacity') %>" />
+        <Parameter Name="MinLoadBalancingInterval" Value="<%= p('MinLoadBalancingInterval') %>" />
+    </Section>
+    <Section Name="Federation">
+        <Parameter Name="NodeIdGeneratorVersion" Value="V4" />
+    </Section>
+    <Section Name="Trace/Etw">
+        <Parameter Name="Level" Value="4" />
+    </Section>
+    <Section Name="Diagnostics">
+      <Parameter Name="ProducerInstances" Value="WinFabLttProducer" />
+    </Section>
+    <Section Name="WinFabLttProducer">
+      <Parameter Name="ProducerType" Value="LttProducer"/>
+      <Parameter Name="IsEnabled" Value="true"/>
+    </Section>
+    <Section Name="RunAs_DCA">
+          <Parameter Name="RunAsAccountType" Value="LocalSystem" />
+    </Section>
+    <!-- SystemSharedLogSizeInMB specifies the size of the log used for the local cluster node database. It is in units of Megabytes.
+          SystemSharedLogMaximumRecordSizeInKB  specifies the size of the maximum record that can be stored in the log. It is in units of KB.
+          Important Note: The local cluster node log size must be at least 16 times the size of the maximum record. So in the settings below, the log size is 256MB and the maximum record size is 16MB. 16 times 16MB is 256MB. If the log size is less than 16 times the maximum record size, the cluster will not start.-->
+    <Section Name="KtlLogger">
+      <Parameter Name="SystemSharedLogSizeInMB" Value="256"/>
+      <Parameter Name="SystemSharedLogMaximumRecordSizeInKB" Value="16384" />
+    </Section>
+    <!-- The sections below specify parameters for the logs used by the different stateful system services.
+          LogSize specifies the size of the log used for by the system service. It is in units of bytes.
+          MaximumRecordSize  specifies the size of the maximum record that can be stored in the log. It is in units of bytes.
+          Important Note: The log size must be at least 16 times the size of the maximum record. So in the settings below, the log size is 128MB and the maximum record size is 8MB. 16 times 8MB is 128MB. If the log size is less than 16 times the maximum record size, the cluster will not start.-->
+    <Section Name="ClusterManager/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+    <Section Name="FileStoreService/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+    <Section Name="Naming/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+    <Section Name="Failover/SharedLog">
+      <Parameter Name="LogSize" Value="134217728"/>
+      <Parameter Name="MaximumRecordSize" Value="8388608" />
+    </Section>
+  </FabricSettings>
+</ClusterManifest>

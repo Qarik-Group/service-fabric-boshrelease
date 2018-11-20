@@ -1,0 +1,15 @@
+{
+  "generator-azuresfjava": {
+    "projName": "SmokeTestJava",
+    "frameworkType": "Reliable Actor Service",
+    "author": "<your name>"
+  },
+  "generator-azuresfcontainer": {
+    "projName": "postgres"
+  },
+  "generator-azuresfcsharp": {
+    "projName": "csharp-demo",
+    "frameworkType": "Reliable Actor Service",
+    "author": "<your name>"
+  }
+}

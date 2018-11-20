@@ -1,0 +1,62 @@
+<%-
+if_p("TLS.admin_client_certificates") do |pem|
+    pem.each do |name, cert|
+        cert.each do |name, value|
+            pem_block = value.strip
+            File.write("/tmp/service-fabric.crt", pem_block, mode: 'a')
+            thumbprint = `openssl x509 -in /tmp/service-fabric.crt -out /dev/stdout -outform der | sha1sum | awk '{printf "%s", toupper($1)}'`
+            File.delete("/tmp/service-fabric.crt")
+%>
+========================== 0600 /var/vcap/jobs/service-fabric/config/certs/<%= thumbprint %>.crt
+<%= pem_block %>
+<%-
+        end
+    end
+end
+%>
+
+<%-
+if_p("TLS.client_certificates") do |pem|
+    pem.each do |name, cert|
+        cert.each do |name, value|
+            pem_block = value.strip
+            File.write("/tmp/service-fabric.crt", pem_block, mode: 'a')
+            thumbprint = `openssl x509 -in /tmp/service-fabric.crt -out /dev/stdout -outform der | sha1sum | awk '{printf "%s", toupper($1)}'`
+            File.delete("/tmp/service-fabric.crt")
+%>
+========================== 0600 /var/vcap/jobs/service-fabric/config/certs/<%= thumbprint %>.crt
+<%= pem_block %>
+<%-
+        end
+    end
+end
+%>
+
+<%-
+if_p("TLS.cluster_certificates") do |pem|
+    thumbprint = "DA39A3EE5E6B4B0D3255BFEF95601890AFD80709"
+    pem.each do |name, cert|
+        if !cert.has_key? "certificate" or !cert.has_key? "key"
+                raise "Certificate or Key not provided for '#{name}'"
+        end
+        cert.each do |name, value|
+            pem_block = value.strip
+            if name == "certificate"
+                File.write("/tmp/service-fabric.crt", pem_block, mode: 'a')
+                thumbprint = `openssl x509 -in /tmp/service-fabric.crt -out /dev/stdout -outform der | sha1sum | awk '{printf "%s", toupper($1)}'`
+                File.delete("/tmp/service-fabric.crt")
+%>
+========================== 0600 /var/vcap/jobs/service-fabric/config/certs/<%= thumbprint %>.crt
+<%= pem_block %>
+<%-
+            end
+            if name == "key"
+%>
+========================== 0600 /var/vcap/jobs/service-fabric/config/certs/<%= thumbprint %>.prv
+<%= pem_block %>
+<%-
+            end
+        end
+    end
+end
+%>

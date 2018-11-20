@@ -1,0 +1,14 @@
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.deps.json
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.runtimeconfig.json
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.runtimeconfig.dev.json
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.dll
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.pdb
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharp.Interfaces.dll
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/bin/Debug/netcoreapp2.0/SmokeTestCSharp.Interfaces.pdb
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.csprojAssemblyReference.cache
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.csproj.CoreCompileInputs.cache
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.AssemblyInfoInputs.cache
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.AssemblyInfo.cs
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.csproj.CopyComplete
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.dll
+/home/vagrant/SmokeTestCSharp/src/SmokeTestCSharp/SmokeTestCSharpTestClient/obj/Debug/netcoreapp2.0/SmokeTestCSharpTestClient.pdb

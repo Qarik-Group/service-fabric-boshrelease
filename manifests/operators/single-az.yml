@@ -1,0 +1,3 @@
+- path: /instance_groups/name=service-fabric/azs
+  type: replace
+  value: [z1]

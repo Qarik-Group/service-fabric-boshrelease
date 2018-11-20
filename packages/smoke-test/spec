@@ -1,0 +1,7 @@
+---
+name: smoke-test
+
+dependencies: []
+
+files:
+    - smoke-test/**/*
