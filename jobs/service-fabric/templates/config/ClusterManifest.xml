@@ -171,9 +171,9 @@ end
       <Parameter Name="AnonymousAccessEnabled" Value="false" />
       <Parameter Name="GenerateV1CommonNameAccount" Value="false" />
       <Parameter Name="PrimaryAccountType" Value="LocalUser"/>
-      <Parameter Name="PrimaryAccountNTLMPasswordSecret" Value="Foo"/>
+      <Parameter Name="PrimaryAccountNTLMPasswordSecret" Value="<%= p('PrimaryAccountNTLMPasswordSecret', "") %>"/>
       <Parameter Name="SecondaryAccountType" Value="LocalUser"/>
-      <Parameter Name="SecondaryAccountNTLMPasswordSecret" Value="Bar"/>
+      <Parameter Name="SecondaryAccountNTLMPasswordSecret" Value="<%= p('SecondaryAccountNTLMPasswordSecret', "") %>"/>
       <%- if p("TLS.enable") == true %>
       <Parameter Name="PrimaryAccountNTLMX509StoreLocation" Value="LocalMachine" />
       <Parameter Name="PrimaryAccountNTLMX509StoreName" Value="My" />

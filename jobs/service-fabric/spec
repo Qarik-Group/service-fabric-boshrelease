@@ -137,6 +137,14 @@ properties:
       and the recommended value is up to 11. Note: If you plan on scaling down ensure that half+1
       of the seed nodes remain in order to maintain quorum and avoid cluster collapse.
     default: 5
+  PrimaryAccountNTLMPasswordSecret:
+    description: |
+      The password secret which used as seed to generate a password when using NTLM authentication.
+      default: ""
+  SecondaryAccountNTLMPasswordSecret:
+    description: |
+      The password secret which used as seed to generate a password when using NTLM authentication.
+    default: ""
   dev.force_package_installation:
     description: Force (re)install Debian packages. Allows for testing of jobs on existing instances.
     default: false

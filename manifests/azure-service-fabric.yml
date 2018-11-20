@@ -15,7 +15,9 @@ instance_groups:
   jobs:
   - name: service-fabric
     release: azure-service-fabric
-    properties: {}
+    properties:
+      PrimaryAccountNTLMPasswordSecret: ((PrimaryAccountNTLMPasswordSecret))
+      SecondaryAccountNTLMPasswordSecret: ((SecondaryAccountNTLMPasswordSecret))
   - name: repair
     release: azure-service-fabric
     properties: {}
@@ -48,7 +50,11 @@ instance_groups:
   - name: upgrade
     release: azure-service-fabric
 
-variables: []
+variables:
+- name: PrimaryAccountNTLMPasswordSecret
+  type: password
+- name: SecondaryAccountNTLMPasswordSecret
+  type: password
 
 stemcells:
 - alias: default
@@ -64,9 +70,4 @@ update:
 
 releases:
 - name: azure-service-fabric
-  sha1: 413321b56323961027f72f4d98cf3e60f93e073d
-  stemcell:
-    os: ubuntu-xenial
-    version: "97.28"
-  url: https://s3.amazonaws.com/azure-service-fabric-boshrelease/compiled-releases/azure-service-fabric/azure-service-fabric-0.7.0-ubuntu-xenial-97.28-20181029-225240-828457572-20181029225634.tgz
-  version: 0.7.0
+  version: latest

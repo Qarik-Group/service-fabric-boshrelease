@@ -31,7 +31,7 @@ delete_deployment() {
 	header "Cleaning up deployment..."
 	bosh -n delete-deployment --force
 }
-trap "echo; echo; echo; sleep 10; delete_deployment" EXIT SIGINT SIGTERM
+#trap "echo; echo; echo; sleep 10; delete_deployment" EXIT SIGINT SIGTERM
 
 
 cd ${REPO_ROOT:?required}
@@ -145,4 +145,7 @@ fi
 
 echo
 echo "SUCCESS"
+
+delete_deployment
+
 exit 0

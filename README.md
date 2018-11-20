@@ -136,6 +136,8 @@ instance_groups:
   - name: service-fabric
     release: azure-service-fabric
     properties:
+      PrimaryAccountNTLMPasswordSecret: Secret-1
+      SecondaryAccountNTLMPasswordSecret: Secret-2
       ClientConnectionEndpoint: 19000
       LeaseDriverEndpoint: 19001
       ClusterConnectionEndpoint: 19002
@@ -215,6 +217,8 @@ instance_groups:
 
 | Property        | Description           | Default  |
 | ------------- |:-------------:| :-------: |
+| PrimaryAccountNTLMPasswordSecret | The password secret which used as seed to generate a password when using NTLM authentication. | Generated in Manifest |
+| SecondaryAccountNTLMPasswordSecret | The password secret which used as seed to generate a password when using NTLM authentication. | Generated in Manifest |
 | ClientConnectionEndpoint | Port to listen on for Client Connections | 19000 |
 | LeaseDriverEndpoint | Port to listen on for Lease Driver Connections | 19001 |
 | ClusterConnectionEndpoint | Port to listen on for Cluster Connections | 19002 |
