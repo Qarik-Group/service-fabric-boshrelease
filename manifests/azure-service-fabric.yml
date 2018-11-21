@@ -15,9 +15,7 @@ instance_groups:
   jobs:
   - name: service-fabric
     release: azure-service-fabric
-    properties:
-      PrimaryAccountNTLMPasswordSecret: ((PrimaryAccountNTLMPasswordSecret))
-      SecondaryAccountNTLMPasswordSecret: ((SecondaryAccountNTLMPasswordSecret))
+    properties: {}
   - name: repair
     release: azure-service-fabric
     properties: {}
@@ -50,16 +48,12 @@ instance_groups:
   - name: upgrade
     release: azure-service-fabric
 
-variables:
-- name: PrimaryAccountNTLMPasswordSecret
-  type: password
-- name: SecondaryAccountNTLMPasswordSecret
-  type: password
+variables: []
 
 stemcells:
 - alias: default
   os: ubuntu-xenial
-  version: 97.16
+  version: 170.9
 
 update:
   canaries: 5
