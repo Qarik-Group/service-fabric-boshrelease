@@ -70,6 +70,9 @@ update:
 
 releases:
 - name: azure-service-fabric
-  sha1: 248dc1bd1c65f28d284ad8c6a6975411bef10d84
-  url: https://github.com/starkandwayne/azure-service-fabric-boshrelease/releases/download/v0.7.1/azure-service-fabric-0.7.1.tgz
+  sha1: 61b95fc9694cc4b1d2dc51ab8dab241488a32b25
+  stemcell:
+    os: ubuntu-xenial
+    version: "170.9"
+  url: https://s3.amazonaws.com/azure-service-fabric-boshrelease/compiled-releases/azure-service-fabric/azure-service-fabric-0.7.1-ubuntu-xenial-170.9-20181121-162454-254357295-20181121162848.tgz
   version: 0.7.1
