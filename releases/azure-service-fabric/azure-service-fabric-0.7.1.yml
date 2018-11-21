@@ -1,0 +1,62 @@
+name: azure-service-fabric
+version: 0.7.1
+commit_hash: f6cf8a6
+uncommitted_changes: false
+jobs:
+- name: repair
+  version: e82051c7ca54a3affe07075306614532d9088c0d
+  fingerprint: e82051c7ca54a3affe07075306614532d9088c0d
+  sha1: bea5acd67c05da012412e7549c3869b361c44de3
+- name: service-fabric
+  version: 4e83aac7973a21d5137be912af3339448fe00777
+  fingerprint: 4e83aac7973a21d5137be912af3339448fe00777
+  sha1: 29b0127a7bfa698d707785470b964eb6cc9563d1
+- name: smoke-test
+  version: b28484baf8a1ff316c5fd23d475648f1be1bfaac
+  fingerprint: b28484baf8a1ff316c5fd23d475648f1be1bfaac
+  sha1: 1457ad1899158ca734b4296aa87757a037131c26
+- name: upgrade
+  version: 52612916a121e27dd4ba80a3600bbde4bc93d400
+  fingerprint: 52612916a121e27dd4ba80a3600bbde4bc93d400
+  sha1: 30aedfdd2cda8e564f21d2c38f3c4fd2fb397208
+packages:
+- name: jq
+  version: f502bfc65e67f129d21866f86e68f8458bd0ae28
+  fingerprint: f502bfc65e67f129d21866f86e68f8458bd0ae28
+  sha1: 85089bdc4af903ed0c40203585f13512a355e7c6
+  dependencies: []
+- name: openjdk
+  version: 7daa7b0e4b3cf1ee13c69569a59bc1e8abec63ed
+  fingerprint: 7daa7b0e4b3cf1ee13c69569a59bc1e8abec63ed
+  sha1: f29fadfd0d8f9ee4bd3bb75dc1c34a2393d5f80e
+  dependencies: []
+- name: python-3.6
+  version: 2b03e8aee365fdcefdd06677e8aa24c3d499515b
+  fingerprint: 2b03e8aee365fdcefdd06677e8aa24c3d499515b
+  sha1: 3589bfb5268e5e43b6e8bece3312fbe7921fe592
+  dependencies: []
+- name: service-fabric
+  version: 948cc81eb47e9af1e4dae2e839c13dfda635cddf
+  fingerprint: 948cc81eb47e9af1e4dae2e839c13dfda635cddf
+  sha1: 6ce79ac0cd7ef426b48004f05fb0cc21dcc260f3
+  dependencies: []
+- name: sfctl
+  version: 41035453e71ff1e7cdadb662c163702ddc9bef8d
+  fingerprint: 41035453e71ff1e7cdadb662c163702ddc9bef8d
+  sha1: 4ce85d2c628979fff1c3ffbb087c95f3e36a7fd9
+  dependencies:
+  - python-3.6
+- name: smoke-test
+  version: e14eb411a2968dc73cc0c2650d371b1c8e18af91
+  fingerprint: e14eb411a2968dc73cc0c2650d371b1c8e18af91
+  sha1: 720a142a2bb45d76e41fde2c5c6734fd44f25bda
+  dependencies: []
+- name: ttar
+  version: c01c4a2a191b81c10da60b25a334453884107c66
+  fingerprint: c01c4a2a191b81c10da60b25a334453884107c66
+  sha1: 400865b5d320ac6f3745e509ac9d7525f135d859
+  dependencies: []
+license:
+  version: b26f279e03d973a98acbe79f1efa357e630ef7bd
+  fingerprint: b26f279e03d973a98acbe79f1efa357e630ef7bd
+  sha1: db69b34d9d2067bb2aae4de813ae2fd8d14a51ba
