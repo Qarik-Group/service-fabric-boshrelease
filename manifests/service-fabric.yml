@@ -4,7 +4,7 @@ name: service-fabric
 instance_groups:
 - name: service-fabric
   azs: [z1,z2,z3]
-  instances: 7
+  instances: 5
   vm_type: service-fabric
   stemcell: default
   networks: [{name: service-fabric}]

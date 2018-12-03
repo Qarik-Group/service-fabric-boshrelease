@@ -1,16 +1,16 @@
 openjdk/openjdk.tar.gz:
   size: 126476497
-  object_id: 16c2a135-41f1-45e3-7b12-a3b64acc9b91
+  object_id: 52b7f56c-b1f5-40db-5dbc-aa1fc856abe4
   sha: 9fc65908420c92047346e5bcc66fee0aad422c5e
 python/Python-3.6.5.tgz:
   size: 22994617
-  object_id: 45eb3658-2c10-4403-4697-187b513562eb
+  object_id: 8b7490d3-2d7d-4fd9-5c0e-f4b09cc5b420
   sha: 12046118d20f9d2007dcc515b15adb4d28a0f7f7
 python/pip-10.0.1.tar.gz:
   size: 1246072
-  object_id: c4f976b1-9c60-4c0f-4438-356100622eb8
+  object_id: 0340499d-3c4b-4d95-62ae-af4e889c02ef
   sha: b5ed40805e5bedb8e992c618a24dbe88cb85ae70
 python/setuptools-39.1.0.zip:
   size: 845300
-  object_id: 85cbf0cc-dd2b-4958-4e8a-9457ea76d1a4
+  object_id: 24f4d1da-6d8f-4122-68e6-a61b7749aa07
   sha: 0c0ded0dd58320ff862f2f495f36d0e44875f8b4
