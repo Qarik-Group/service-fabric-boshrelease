@@ -1,7 +1,7 @@
-# BOSH release for azure-service-fabric
+# BOSH release for service-fabric
 
 This BOSH release and deployment manifest deploy a linux based standalone cluster of
-azure-service-fabric.
+service-fabric.
 
 # Deployment
 
@@ -119,7 +119,7 @@ applicable) below that.
 
 ```yaml
 ---
-name: azure-service-fabric
+name: service-fabric
 
 instance_groups:
 - name: service-fabric
@@ -134,7 +134,7 @@ instance_groups:
       swap_size: 0
   jobs:
   - name: service-fabric
-    release: azure-service-fabric
+    release: service-fabric
     properties:
       PrimaryAccountNTLMPasswordSecret: Secret-1
       SecondaryAccountNTLMPasswordSecret: Secret-2
@@ -181,7 +181,7 @@ instance_groups:
               -----BEGIN CERTIFICATE-----
               -----END CERTIFICATE-----
   - name: repair
-    release: azure-service-fabric
+    release: service-fabric
     properties: {}
 
 - name: smoke-test
@@ -196,7 +196,7 @@ instance_groups:
       ipv6: {enable: true}
   jobs:
   - name: smoke-test
-    release: azure-service-fabric
+    release: service-fabric
 
 - name: upgrade
   azs: [z1]
@@ -210,7 +210,7 @@ instance_groups:
       ipv6: {enable: true}
   jobs:
   - name: upgrade
-    release: azure-service-fabric
+    release: service-fabric
     properties:
       FabricCodeVersion: 6.3.129.1
 ```
@@ -242,9 +242,9 @@ Finally after filling out the manifest according to your needs, `bosh deploy` th
 
 ```bash
 export BOSH_ENVIRONMENT=<bosh-alias>
-export BOSH_DEPLOYMENT=azure-service-fabric
-git clone https://github.com/cloudfoundry-community/azure-service-fabric-boshrelease.git
-bosh deploy azure-service-fabric-boshrelease/manifests/azure-service-fabric.yml
+export BOSH_DEPLOYMENT=service-fabric
+git clone https://github.com/cloudfoundry-community/service-fabric-boshrelease.git
+bosh deploy service-fabric-boshrelease/manifests/service-fabric.yml
 ```
 
 # Smoke Tests
@@ -259,7 +259,7 @@ pull an image from dockerhub.
 To run the smoke-test errand execute the following commmands:
 ```bash
 export BOSH_ENVIRONMENT=<bosh-alias>
-export BOSH_DEPLOYMENT=azure-service-fabric
+export BOSH_DEPLOYMENT=service-fabric
 bosh run-errand smoke-test
 ```
 # Service Fabric Upgrades
@@ -289,7 +289,7 @@ Example configration for a specific version is shown below (Specifically the
       ipv6: {enable: true}
   jobs:
   - name: upgrade
-    release: azure-service-fabric
+    release: service-fabric
     properties:
       FabricCodeVersion: 6.3.129.1
 ```
@@ -297,22 +297,22 @@ Example configration for a specific version is shown below (Specifically the
 To run the upgrade errand execute the following commmands:
 ```bash
 export BOSH_ENVIRONMENT=<bosh-alias>
-export BOSH_DEPLOYMENT=azure-service-fabric
+export BOSH_DEPLOYMENT=service-fabric
 bosh run-errand upgrade
 ```
 
 # Bosh Upgrades
 
-When new versions of `azure-service-fabric-boshrelease` are released the
-`manifests/azure-service-fabric.yml` file will be updated. This means you can
+When new versions of `service-fabric-boshrelease` are released the
+`manifests/service-fabric.yml` file will be updated. This means you can
 easily `git pull` and `bosh deploy` to upgrade to a new version of the
 bosh-release. New versions of the release will include updates for new stemcell
 versions as well as the most recent version of ServiceFabric.
 
 ```bash
 export BOSH_ENVIRONMENT=<bosh-alias>
-export BOSH_DEPLOYMENT=azure-service-fabric
-cd azure-service-fabric-boshrelease
+export BOSH_DEPLOYMENT=service-fabric
+cd service-fabric-boshrelease
 git pull
-bosh deploy manifests/azure-service-fabric.yml
+bosh deploy manifests/service-fabric.yml
 ```

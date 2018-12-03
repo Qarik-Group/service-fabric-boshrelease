@@ -1,10 +1,10 @@
 ---
-name: azure-service-fabric
+name: service-fabric
 
 instance_groups:
 - name: service-fabric
   azs: [z1,z2,z3]
-  instances: 5
+  instances: 7
   vm_type: service-fabric
   stemcell: default
   networks: [{name: service-fabric}]
@@ -14,10 +14,10 @@ instance_groups:
       swap_size: 0
   jobs:
   - name: service-fabric
-    release: azure-service-fabric
+    release: service-fabric
     properties: {}
   - name: repair
-    release: azure-service-fabric
+    release: service-fabric
     properties: {}
 
 - name: smoke-test
@@ -32,7 +32,7 @@ instance_groups:
       ipv6: {enable: true}
   jobs:
   - name: smoke-test
-    release: azure-service-fabric
+    release: service-fabric
 
 - name: upgrade
   azs: [z1]
@@ -46,7 +46,7 @@ instance_groups:
       ipv6: {enable: true}
   jobs:
   - name: upgrade
-    release: azure-service-fabric
+    release: service-fabric
 
 variables: []
 
@@ -63,7 +63,7 @@ update:
   serial: false
 
 releases:
-- name: azure-service-fabric
+- name: service-fabric
   sha1: 61b95fc9694cc4b1d2dc51ab8dab241488a32b25
   stemcell:
     os: ubuntu-xenial

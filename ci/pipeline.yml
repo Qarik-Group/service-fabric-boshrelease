@@ -528,4 +528,4 @@ resources:
       region_name:       (( grab meta.aws.region_name ))
       access_key_id:     (( grab meta.aws.access_key ))
       secret_access_key: (( grab meta.aws.secret_key ))
-      regexp:            "compiled-releases/azure-service-fabric/.*-(\\d+).tgz"
+      regexp:            "compiled-releases/service-fabric/.*-(\\d+).tgz"

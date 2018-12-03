@@ -1,6 +1,6 @@
-name: azure-service-fabric
-version: 0.7.0
-commit_hash: a734dc6
+name: service-fabric
+version: 0.7.1
+commit_hash: f6cf8a6
 uncommitted_changes: false
 jobs:
 - name: repair
@@ -8,9 +8,9 @@ jobs:
   fingerprint: e82051c7ca54a3affe07075306614532d9088c0d
   sha1: bea5acd67c05da012412e7549c3869b361c44de3
 - name: service-fabric
-  version: bd1ec91a15242075091f5191b4936ee9e27aef26
-  fingerprint: bd1ec91a15242075091f5191b4936ee9e27aef26
-  sha1: e3cfa50d6ede25831f11d5d56a81bee859b6b858
+  version: 4e83aac7973a21d5137be912af3339448fe00777
+  fingerprint: 4e83aac7973a21d5137be912af3339448fe00777
+  sha1: 29b0127a7bfa698d707785470b964eb6cc9563d1
 - name: smoke-test
   version: b28484baf8a1ff316c5fd23d475648f1be1bfaac
   fingerprint: b28484baf8a1ff316c5fd23d475648f1be1bfaac

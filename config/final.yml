@@ -2,5 +2,5 @@
 blobstore:
   provider: s3
   options:
-    bucket_name: azure-service-fabric-boshrelease
-final_name: azure-service-fabric
+    bucket_name: service-fabric-boshrelease
+final_name: service-fabric

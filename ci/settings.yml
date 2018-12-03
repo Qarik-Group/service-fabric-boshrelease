@@ -1,6 +1,6 @@
 ---
 meta:
-  name:    azure-service-fabric
+  name:    service-fabric
   target:  service-fabric
   url:     https://pipes.starkandwayne.com
 
@@ -23,8 +23,8 @@ meta:
   aws:
     bucket:      (( grab meta.pipeline ))
     region_name: us-east-1
-    access_key:  ((cfcommunity.access))
-    secret_key:  ((cfcommunity.secret))
+    access_key:  ((s3cmd.access))
+    secret_key:  ((s3cmd.secret))
 
   github:
     owner:  starkandwayne
