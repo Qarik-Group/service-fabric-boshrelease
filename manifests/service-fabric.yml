@@ -64,9 +64,9 @@ update:
 
 releases:
 - name: service-fabric
-  sha1: 98266b90573b614e8a91ad90823afdb7bea3db6e
+  sha1: e5b2b50b28510ad904f9c62b995969f43aac4ca1
   stemcell:
     os: ubuntu-xenial
-    version: "170.9"
-  url: https://service-fabric-boshrelease.s3.amazonaws.com/compiled-releases/service-fabric/service-fabric-0.7.2-ubuntu-xenial-170.9-20181204-104321-950776-20181204155535.tgz
+    version: "170.13"
+  url: https://s3.amazonaws.com/service-fabric-boshrelease/compiled-releases/service-fabric/service-fabric-0.7.2-ubuntu-xenial-170.13-20181217-164813-321070657-20181217165345.tgz
   version: 0.7.2
